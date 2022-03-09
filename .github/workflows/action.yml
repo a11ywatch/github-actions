@@ -12,8 +12,10 @@ jobs:
       - name: Install the A11yWatch CLI
         run: cargo install a11ywatch_cli
       - name: Start A11yWatch Service
+        if: ${{ !env.EXTERNAL }}
         run: a11ywatch start
       - name: Wait for Healthy Container
+        if: ${{ !env.EXTERNAL }}
         run: |
           attempt=0
 
@@ -21,16 +23,22 @@ jobs:
               attempt=$(( $attempt + 1 ))
               echo "Waiting for server to be up (attempt: $attempt)..."
               result=$(docker logs api)
-              if grep -q 'waiting for connections on port 8080' <<< $result ; then
+              if grep -q 'Server ready' <<< $result ; then
                 echo "A11yWatch ready!"
                 break
               fi
-            sleep 0.3
+              sleep 0.3
           done
       - name: Scan Website
-        run: a11ywatch scan --url $WEBSITE_URL
+        run: |
+          if [[$EXTERNAL = "true"]]; then
+            a11ywatch scan --url $WEBSITE_URL --external
+          else
+            a11ywatch scan --url $WEBSITE_URL
+          fi
         env:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+          EXTERNAL: ${{ secrets.EXTERNAL }}
       - name: Stop A11yWatch Service
-        if: always()
+        if: ${{ !env.EXTERNAL }}
         run: a11ywatch stop
