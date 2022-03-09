@@ -1,0 +1,49 @@
+name: "A11yWatch"
+on: [pull_request, push]
+author: "A11yWatch"
+branding:
+  icon: "shield"
+  color: "gray-dark"
+description: A11yWatch Project Bot scans your website url to make sure its fully inclusive
+inputs:
+  WEBSITE_URL:
+    description: Website domain to scan
+    required: true
+  EXTERNAL:
+    description: Use the A11yWatch external api hosted by us [Fast Testing]
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Install Rust
+      shell: bash
+      run: curl https://sh.rustup.rs -sSf | sh -s -- -y
+    - name: Install the A11yWatch CLI
+      shell: bash
+      run: cargo install a11ywatch_cli
+    - name: Start A11yWatch Service
+      shell: bash
+      run: a11ywatch start
+    - name: Wait for Healthy Container
+      shell: bash
+      run: |
+        attempt=0
+
+        while [ $attempt -le 10 ]; do
+            attempt=$(( $attempt + 1 ))
+            echo "Waiting for server to be up (attempt: $attempt)..."
+            result=$(docker logs api)
+            if grep -q 'waiting for connections on port 8080' <<< $result ; then
+              echo "A11yWatch ready!"
+              break
+            fi
+            sleep 0.3
+        done
+    - name: Scan Website
+      shell: bash
+      run: a11ywatch scan --url "${{ inputs.WEBSITE_URL }}"
+    - name: Stop A11yWatch Service
+      shell: bash
+      if: always()
+      run: a11ywatch stop

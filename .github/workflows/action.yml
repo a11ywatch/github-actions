@@ -1,0 +1,36 @@
+name: A11yWatch
+on: [pull_request, push]
+jobs:
+  run-container:
+    name: End to End
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Install Rust
+        run: curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - name: Install the A11yWatch CLI
+        run: cargo install a11ywatch_cli
+      - name: Start A11yWatch Service
+        run: a11ywatch start
+      - name: Wait for Healthy Container
+        run: |
+          attempt=0
+
+          while [ $attempt -le 15 ]; do
+              attempt=$(( $attempt + 1 ))
+              echo "Waiting for server to be up (attempt: $attempt)..."
+              result=$(docker logs api)
+              if grep -q 'waiting for connections on port 8080' <<< $result ; then
+                echo "A11yWatch ready!"
+                break
+              fi
+            sleep 0.3
+          done
+      - name: Scan Website
+        run: a11ywatch scan --url $WEBSITE_URL
+        env:
+          WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+      - name: Stop A11yWatch Service
+        if: always()
+        run: a11ywatch stop
