@@ -10,22 +10,31 @@ inputs:
     description: Website domain to scan
     required: true
   EXTERNAL:
-    description: Use the A11yWatch external api hosted by us [Fast Testing]
+    description: Use the A11yWatch external api hosted.
     required: false
     default: ""
+outputs:
+  results:
+    description: "Website Results"
+    value: ${{ steps.a11ywatch-results-generator.outputs.results }}
 runs:
   using: composite
   steps:
     - name: Install Rust
       shell: bash
       run: curl https://sh.rustup.rs -sSf | sh -s -- -y
+
     - name: Install the A11yWatch CLI
       shell: bash
       run: cargo install a11ywatch_cli
+
     - name: Start A11yWatch Service
+      if: ${{ !inputs.EXTERNAL }}
       shell: bash
       run: a11ywatch start
+
     - name: Wait for Healthy Container
+      if: ${{ !inputs.EXTERNAL }}
       shell: bash
       run: |
         attempt=0
@@ -40,10 +49,21 @@ runs:
             fi
             sleep 0.3
         done
-    - name: Scan Website
+
+    - name: A11ywatch Scan
+      id: a11ywatch-results-generator
       shell: bash
-      run: a11ywatch scan --url "${{ inputs.WEBSITE_URL }}"
+      run: |
+
+        if ${{ inputs.EXTERNAL }} = "true"; then
+          results=$(a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external)
+        else
+          results=($a11ywatch scan --url "${{ inputs.WEBSITE_URL }}")
+        fi
+
+        echo "::set-output name=results::${results}"
+
     - name: Stop A11yWatch Service
+      if: ${{ !inputs.EXTERNAL }}
       shell: bash
-      if: always()
       run: a11ywatch stop
