@@ -9,6 +9,15 @@ jobs:
         uses: actions/checkout@v2
       - name: Install Rust
         run: curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install the A11yWatch CLI
         run: cargo install a11ywatch_cli
       - name: Start A11yWatch Service
