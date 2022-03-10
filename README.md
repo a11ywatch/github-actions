@@ -9,8 +9,11 @@
 **`WEBSITE_URL:`**
 Website domain to scan (Start with http or https).
 
+**`FAIL_ERROR_COUNT:`**
+Determine whether to fail the CI if issues has errors above theshold.
+
 **`EXTERNAL:`**
-Use the A11yWatch external api for faster results. (Subjected to rate limits).
+Use the A11yWatch external API for faster results. (Subjected to rate limits).
 
 ### Organization/Scoped project
 
@@ -30,7 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Website Cron Scan
-        uses: a11ywatch/a11ywatch-github-bot@v0.0.13
+        uses: a11ywatch/github-action@v1.1.1
         with:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+          EXTERNAL: false
+          FAIL_ERROR_COUNT: 10
 ```

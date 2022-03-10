@@ -13,10 +13,17 @@ inputs:
     description: Use the A11yWatch external api hosted.
     required: false
     default: ""
+  FAIL_ERROR_COUNT:
+    description: Use to fail the CI if the amount of issues is greater than the count.
+    required: false
+    default: ""
 outputs:
   results:
     description: "Website Results"
     value: ${{ steps.a11ywatch-results-generator.outputs.results }}
+  issues:
+    description: "The amount of issues found on the page"
+    value: ${{ steps.a11ywatch-results-generator.outputs.issues }}
 runs:
   using: composite
   steps:
@@ -67,16 +74,33 @@ runs:
       id: a11ywatch-results-generator
       shell: bash
       run: |
+        temp_folder_results="/tmp/a11ywatch/results.json"
 
-        if ${{ inputs.EXTERNAL }} = "true"; then
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external > ./results.json
+        if [ ${{ inputs.EXTERNAL }} = "true" ]; then
+          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external > $temp_folder_results
         else
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" > ./results.json
+          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" > $temp_folder_results
         fi
 
-        JSON="$(cat ./results.json)"
+        website_issues=$(jq '.website.issue | length' $temp_folder_results)
+        error_limit=${{ inputs.FAIL_ERROR_COUNT }}
+        error_count=${error_limit:-0}
+
+        if [ "$website_issues" -gt 0 ]; then
+          echo "Issues detected: $website_issues"
+
+          if [ "$error_count" -gt 0 ]; then
+            if [ $website_issues -gt "$error_count" ]; then
+                echo "Failed accessibility test!"
+                exit 1
+            fi
+          fi
+        fi
+
+        JSON="$(cat $temp_folder_results)"
 
         echo "::set-output name=results::$(echo ${JSON//'%'/'%25'})"
+        echo "::set-output name=issues::$(echo ${website_issues})"
 
     - name: Stop A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}
