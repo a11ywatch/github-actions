@@ -17,6 +17,9 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+        if: ${{ env.DOCKER_LAYER_CACHE }}
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -43,14 +46,33 @@ jobs:
           done
       - name: Scan Website
         run: |
-          if $EXTERNAL = "true"; then
-            a11ywatch scan --url $WEBSITE_URL --external
+          # run remote scan via a11ywatch.com
+          if [ "$EXTERNAL" = "true" ]; then
+            a11ywatch scan --url $WEBSITE_URL --external > /tmp/a11ywatch/results.json
           else
-            a11ywatch scan --url $WEBSITE_URL
+            a11ywatch scan --url $WEBSITE_URL > /tmp/a11ywatch/results.json
           fi
+
+          # get issues count
+          issues=$(jq '.website.issue | length' /tmp/a11ywatch/results.json)
+          error_limit=${{ env.FAIL_ERROR_COUNT }}
+          error_count=${error_limit:-0}
+
+          if [ "$issues" -gt 0 ]; then
+            echo "Issues detected $issues"
+
+            if [ "$error_count" -gt 0 ]; then
+              if [ $issues -gt "$error_count" ]; then
+                  echo "Failed accessibility test!"
+                  exit 1
+              fi
+            fi
+          fi
+
         env:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
           EXTERNAL: ${{ secrets.EXTERNAL }}
+          FAIL_ERROR_COUNT: ${{ secrets.FAIL_ERROR_COUNT }}
       - name: Stop A11yWatch Service
         if: ${{ !env.EXTERNAL }}
         run: a11ywatch stop

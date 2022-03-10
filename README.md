@@ -12,6 +12,9 @@ Website domain to scan (Start with http or https).
 **`EXTERNAL:`**
 Use the A11yWatch external api for faster results. (Subjected to rate limits).
 
+**`CI_FAIL_ERROR_COUNT:`**
+Determine whether to fail the CI if issues has errors above theshold.
+
 ### Organization/Scoped project
 
 1. Set the url of the website you want to scan to `WEBSITE_URL`
