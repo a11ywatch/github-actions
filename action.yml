@@ -17,6 +17,16 @@ inputs:
     description: Use to fail the CI if the amount of issues is greater than the count.
     required: false
     default: ""
+  DISABLE_PR_STATS:
+    description: Disable the A11yWatch bot from posting on your PR.
+    required: false
+    default: ""
+  A11YWATCH_GH_USER:
+    required: false
+    default: ${{ secrets.A11YWATCH_GH_USER }}
+  A11YWATCH_GH_USER_TOKEN:
+    required: false
+    default: ${{ secrets.A11YWATCH_GH_USER_TOKEN }}
 outputs:
   results:
     description: "Website Results"
@@ -24,6 +34,7 @@ outputs:
   issues:
     description: "The amount of issues found on the page"
     value: ${{ steps.a11ywatch-results-generator.outputs.issues }}
+
 runs:
   using: composite
   steps:
@@ -44,9 +55,8 @@ runs:
       run: curl https://sh.rustup.rs -sSf | sh -s -- -y
 
     - name: Install the A11yWatch CLI
-      if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
-      run: cargo install a11ywatch_cli
+      run: cargo install a11ywatch_cli --force
 
     - name: Start A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}
@@ -74,15 +84,20 @@ runs:
       id: a11ywatch-results-generator
       shell: bash
       run: |
-        temp_folder_results="/tmp/a11ywatch/results.json"
+        # run scan request
+        ext_var=${{ inputs.EXTERNAL }}
+        external_env=${ext_var:-"false"}
 
-        if [ ${{ inputs.EXTERNAL }} = "true" ]; then
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external > $temp_folder_results
+        if [ "$external_env" = "true" ]; then
+          # run remote scan via a11ywatch.com
+          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external --save
         else
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" > $temp_folder_results
+          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --save
         fi
 
-        website_issues=$(jq '.website.issue | length' $temp_folder_results)
+        results_path="$(a11ywatch --find-results)"
+
+        website_issues=$(jq '.website.issue | length' $results_path)
         error_limit=${{ inputs.FAIL_ERROR_COUNT }}
         error_count=${error_limit:-0}
 
@@ -101,6 +116,40 @@ runs:
 
         echo "::set-output name=results::$(echo ${JSON//'%'/'%25'})"
         echo "::set-output name=issues::$(echo ${website_issues})"
+
+    - name: Post Stats to GitHub PR
+      shell: bash
+      if: ${{ inputs.A11YWATCH_GH_USER_TOKEN }} && ${{ !inputs.DISABLE_PR_STATS }}
+      run: |
+        results_path="$(a11ywatch --find-results)"
+        gh_api_url="$(a11ywatch --github-api-url)"
+
+        pr_response=$(curl --location --request GET $gh_api_url \
+        -u $A11YWATCH_GH_USER:$A11YWATCH_GH_USER_TOKEN)
+
+        if [ $(echo $pr_response | jq length) -eq 0 ]; then
+          echo "No PR found to update"
+        else
+          pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
+          website_results=$(jq '.website.issue | length' $results_path)
+
+          start_body='{
+                        "body":'
+
+
+          end_body='   }'
+          
+          webpage_url=${{ inputs.WEBSITE_URL }}
+
+          body_message=$(echo "$website_results issues on $webpage_url")
+          body=$(echo $start_body '"'$body_message'"' $end_body)
+
+          curl --location --request POST "$pr_comment_url" \
+          -u $A11YWATCH_GH_USER:$A11YWATCH_GH_USER_TOKEN \
+          --header 'Content-Type: application/json' \
+          --data-raw "$body"
+          
+        fi
 
     - name: Stop A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}
