@@ -24,8 +24,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: curl https://sh.rustup.rs -sSf | sh -s -- -y
       - name: Install the A11yWatch CLI
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: cargo install a11ywatch_cli
+        run: cargo install a11ywatch_cli --force
       - name: Start A11yWatch Service
         if: ${{ !env.EXTERNAL }}
         run: a11ywatch start
@@ -46,15 +45,20 @@ jobs:
           done
       - name: Scan Website
         run: |
-          # run remote scan via a11ywatch.com
-          if [ "$EXTERNAL" = "true" ]; then
-            a11ywatch scan --url $WEBSITE_URL --external > /tmp/a11ywatch/results.json
+          ext_var=${{ env.EXTERNAL }}
+          external_env=${ext_var:-"false"}
+
+          if [ "$external_env" = "true" ]; then
+            # run remote scan via a11ywatch.com
+            a11ywatch scan --url $WEBSITE_URL --external --save
           else
-            a11ywatch scan --url $WEBSITE_URL > /tmp/a11ywatch/results.json
+            a11ywatch scan --url $WEBSITE_URL --save
           fi
 
+          results_path="$(a11ywatch --find-results)"
+
           # get issues count
-          issues=$(jq '.website.issue | length' /tmp/a11ywatch/results.json)
+          issues=$(jq '.website.issue | length' $results_path)
           error_limit=${{ env.FAIL_ERROR_COUNT }}
           error_count=${error_limit:-0}
 
@@ -71,8 +75,45 @@ jobs:
 
         env:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
-          EXTERNAL: ${{ secrets.EXTERNAL }}
+          EXTERNAL: true
           FAIL_ERROR_COUNT: ${{ secrets.FAIL_ERROR_COUNT }}
+      - name: Post Stats to GitHub PR
+        run: |
+          results_path="$(a11ywatch --find-results)"
+          gh_api_url="$(a11ywatch --github-api-url)"
+
+          pr_response=$(curl --location --request GET $gh_api_url \
+          -u $A11YWATCH_GH_USER:$A11YWATCH_GH_USER_TOKEN)
+
+          if [ $(echo $pr_response | jq length) -eq 0 ]; then
+            echo "No PR found to update"
+          else
+            pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
+            website_results=$(jq '.website.issue | length' $results_path)
+
+            start_body='{
+                          "body":'
+
+
+            end_body='   }'
+            
+            webpage_url=${WEBSITE_URL}
+
+            body_message=$(echo "$website_results issues on $webpage_url")
+            body=$(echo $start_body '"'$body_message'"' $end_body)
+
+            curl --location --request POST "$pr_comment_url" \
+            -u $A11YWATCH_GH_USER:$A11YWATCH_GH_USER_TOKEN \
+            --header 'Content-Type: application/json' \
+            --data-raw "$body"
+            
+          fi
+
+        env:
+          A11YWATCH_GH_USER: ${{ secrets.A11YWATCH_GH_USER }}
+          A11YWATCH_GH_USER_TOKEN: ${{ secrets.A11YWATCH_GH_USER_TOKEN }}
+          WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+
       - name: Stop A11yWatch Service
         if: ${{ !env.EXTERNAL }}
         run: a11ywatch stop
