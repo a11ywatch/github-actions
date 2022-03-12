@@ -89,18 +89,8 @@ jobs:
             echo "No PR found to update"
           else
             pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
-            website_results=$(jq '.website.issue | length' $results_path)
 
-            start_body='{
-                          "body":'
-
-
-            end_body='   }'
-            
-            webpage_url=${WEBSITE_URL}
-
-            body_message=$(echo "$website_results issues on $webpage_url")
-            body=$(echo $start_body '"'$body_message'"' $end_body)
+            body="$(a11ywatch extract -p github)"
 
             curl --location --request POST "$pr_comment_url" \
             -u $A11YWATCH_GH_USER:$A11YWATCH_GH_USER_TOKEN \
