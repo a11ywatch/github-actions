@@ -114,8 +114,9 @@ runs:
         fi
 
         JSON="$(cat $temp_folder_results)"
+        results_json="$(a11ywatch -r)"
 
-        echo "::set-output name=results::$(echo ${JSON//'%'/'%25'})"
+        echo "::set-output name=results::$(echo ${results_json})"
         echo "::set-output name=issues::$(echo ${website_issues})"
 
     - name: Post Stats to GitHub PR
