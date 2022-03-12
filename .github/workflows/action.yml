@@ -100,8 +100,6 @@ jobs:
           fi
 
         env:
-          A11YWATCH_GH_USER: ${{ secrets.A11YWATCH_GH_USER }}
-          A11YWATCH_GH_USER_TOKEN: ${{ secrets.A11YWATCH_GH_USER_TOKEN }}
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
 
       - name: Stop A11yWatch Service

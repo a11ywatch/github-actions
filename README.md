@@ -1,6 +1,6 @@
 # A11yWatch Github Action
 
-**Description:** `A11yWatch` scans a website url to get a11ywatch insight and guides you to better handling your content.
+**Description:** `A11yWatch` scans a website url to get a11ywatch insight and guides you to better handling your content. Receive actionable items in your PR on what to fix and why.
 
 **Functionality:** This GitHub action allows for running dedicated website inclusion scans on `Pull Requests`, `Labels`, or `Push`.
 
@@ -18,17 +18,32 @@ Use the A11yWatch external API for faster results. (Subjected to rate limits).
 **`DISABLE_PR_STATS:`**
 Prevent the A11yWatch bot from posting to stats of scan to your PR.
 
-**`GITHUB_TOKEN:`**
-Set github api token if you want to post stats to github from the results
-
-**`GITHUB_ACTOR:`**
-Set as primary user to post results ot github
+**`TOKEN:`**
+Set github api token of the user to send results to github. - defaults to github action token
 
 ### Organization/Scoped project
 
 1. Set the url of the website you want to scan to `WEBSITE_URL`
 
-### Example -
+### Example
+
+A basic example adding the action to run accessibility and vitals.
+
+```yaml
+name: Run accessibility test across your website.
+on: [push, pull]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: A11yWatch Scan
+        uses: a11ywatch/github-action@v1.2.40
+        id: a11ywatch-results-generator
+        with:
+          WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+          EXTERNAL: false
+          FAIL_ERROR_COUNT: 10
+```
 
 The following cron schedule expression will run `every 3 hours` to make sure your website is healthy.
 
