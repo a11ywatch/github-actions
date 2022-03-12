@@ -22,11 +22,7 @@ inputs:
     required: false
     default: ""
   TOKEN:
-    description: The github token to use for the pr.
-    required: false
-    default: ""
-  ACTOR:
-    description: The user who triggered the pr or app.
+    description: The github token to use for posting comments and issues.
     required: false
     default: ""
 outputs:
@@ -114,22 +110,27 @@ runs:
         fi
 
         JSON="$(cat $temp_folder_results)"
+        results_json="$(a11ywatch -r)"
 
-        echo "::set-output name=results::$(echo ${JSON//'%'/'%25'})"
+        echo "::set-output name=results::$(echo ${results_json})"
         echo "::set-output name=issues::$(echo ${website_issues})"
 
     - name: Post Stats to GitHub PR
       shell: bash
-      if: ${{ inputs.TOKEN }}
+      if: ${{ !inputs.DISABLE_PR_STATS }}
       run: |
-        GH_TOKEN="${{ inputs.TOKEN }}"
-        GH_USER="${{ inputs.ACTOR }}"
+        # post github results if pr set
+        INPUT_GH_TOKEN=${{ inputs.TOKEN }}
+        GH_ACTION_TOKEN=${{ secrets.token }}
+
+        GH_TOKEN="${INPUT_GH_TOKEN:GH_ACTION_TOKEN}"
 
         results_path="$(a11ywatch --find-results)"
         gh_api_url="$(a11ywatch --github-api-url)"
 
-        pr_response=$(curl --location --request GET $gh_api_url \
-            -u $GH_USER:$GH_TOKEN)
+        # check for open pr
+        pr_response=$(curl --location --request GET "$gh_api_url" \
+            -H "Authorization: token $GH_TOKEN")
 
         if [ $(echo $pr_response | jq length) -eq 0 ]; then
           echo "No PR found to update"
@@ -138,10 +139,12 @@ runs:
 
           body="$(a11ywatch extract -p github)"
 
+          # post comment to github
           curl --location --request POST "$pr_comment_url" \
-            -u $GH_USER:$GH_TOKEN \
-            --header 'Content-Type: application/json' \
+            -H "Authorization: token $GH_TOKEN" \
+            -H 'Content-Type: application/json' \
             --data-raw "$body"
+
         fi
 
     - name: Stop A11yWatch Service
