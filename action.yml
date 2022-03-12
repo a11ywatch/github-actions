@@ -114,22 +114,26 @@ runs:
         fi
 
         JSON="$(cat $temp_folder_results)"
+        results_json="$(a11ywatch -r)"
 
-        echo "::set-output name=results::$(echo ${JSON//'%'/'%25'})"
+        echo "::set-output name=results::$(echo ${results_json})"
         echo "::set-output name=issues::$(echo ${website_issues})"
 
     - name: Post Stats to GitHub PR
       shell: bash
-      if: ${{ inputs.TOKEN }}
+      if: ${{ !inputs.DISABLE_PR_STATS }}
       run: |
         GH_TOKEN="${{ inputs.TOKEN }}"
         GH_USER="${{ inputs.ACTOR }}"
+        GITHUB_TOKEN=${GH_TOKEN:-GITHUB_TOKEN}
+        GITHUB_USER=${GH_USER:-GITHUB_ACTOR}
 
         results_path="$(a11ywatch --find-results)"
         gh_api_url="$(a11ywatch --github-api-url)"
 
+        # check for open pr
         pr_response=$(curl --location --request GET $gh_api_url \
-            -u $GH_USER:$GH_TOKEN)
+            -u $GITHUB_USER:$GITHUB_TOKEN)
 
         if [ $(echo $pr_response | jq length) -eq 0 ]; then
           echo "No PR found to update"
@@ -138,8 +142,9 @@ runs:
 
           body="$(a11ywatch extract -p github)"
 
+          # post comment to github
           curl --location --request POST "$pr_comment_url" \
-            -u $GH_USER:$GH_TOKEN \
+            -u $GITHUB_USER:$GITHUB_TOKEN \
             --header 'Content-Type: application/json' \
             --data-raw "$body"
         fi
