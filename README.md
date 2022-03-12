@@ -18,10 +18,10 @@ Use the A11yWatch external API for faster results. (Subjected to rate limits).
 **`DISABLE_PR_STATS:`**
 Prevent the A11yWatch bot from posting to stats of scan to your PR.
 
-**`GITHUB_TOKEN:`**
+**`TOKEN:`**
 Set github api token if you want to post stats to github from the results
 
-**`GITHUB_ACTOR:`**
+**`ACTOR:`**
 Set as primary user to post results ot github
 
 ### Organization/Scoped project
