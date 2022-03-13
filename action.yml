@@ -25,6 +25,10 @@ inputs:
     description: The github token to use for posting comments and issues.
     required: false
     default: ""
+  A11YWATCH_TOKEN:
+    description: The a11ywatch token to use for authenticated to the API.
+    required: false
+    default: ""
 outputs:
   results:
     description: "Website Results"
@@ -54,6 +58,11 @@ runs:
     - name: Install the A11yWatch CLI
       shell: bash
       run: cargo install a11ywatch_cli --force
+
+    - name: Configure CLI creds
+      if: ${{ inputs.A11YWATCH_TOKEN }}
+      shell: bash
+      run: a11ywatch --set-token ${{ inputs.A11YWATCH_TOKEN }}
 
     - name: Start A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}

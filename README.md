@@ -21,6 +21,9 @@ Prevent the A11yWatch bot from posting to stats of scan to your PR.
 **`TOKEN:`**
 Set github api token of the user to send results to github. - defaults to github action token
 
+**`A11YWATCH_TOKEN:`**
+Set a11ywatch api token of the user to authenticate external request. You can get this from the profile page after logging in at [api-info](https://a11ywatch.com/api-info).
+
 ### Organization/Scoped project
 
 1. Set the url of the website you want to scan to `WEBSITE_URL`
@@ -43,6 +46,7 @@ jobs:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
           EXTERNAL: false
           FAIL_ERROR_COUNT: 10
+          A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
 ```
 
 The following cron schedule expression will run `every 3 hours` to make sure your website is healthy.
