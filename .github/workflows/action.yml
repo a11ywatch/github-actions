@@ -25,6 +25,11 @@ jobs:
         run: curl https://sh.rustup.rs -sSf | sh -s -- -y
       - name: Install the A11yWatch CLI
         run: cargo install a11ywatch_cli --force
+      - name: Add API token from secrets
+        if: ${{ env.A11YWATCH_TOKEN }}
+        run: a11ywatch --set-token $A11YWATCH_TOKEN
+        env:
+          A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
       - name: Start A11yWatch Service
         if: ${{ !env.EXTERNAL }}
         run: a11ywatch start
@@ -45,13 +50,27 @@ jobs:
           done
       - name: Scan Website
         run: |
+          #!/bin/bash
+          # set defaults to env CLI options
           ext_var=${{ env.EXTERNAL }}
-          external_env=${ext_var:-"false"}
+          site_wide_scan_var=${{ env.SITE_WIDE }}
+          external_env=${ext_var:-false}
+          site_wide_scan=${site_wide_scan_var:-false}
 
-          if [ "$external_env" = "true" ]; then
-            # run remote scan via a11ywatch.com
+          if [[ "$site_wide_scan" = true ]]
+          then
+            site_wide_scan="--all"
+          else
+            site_wide_scan=""
+          fi
+
+          # run website scan
+          if [[ "$external_env" = true ]]
+          then
+            echo "running external"
             a11ywatch scan --url $WEBSITE_URL --external --save
           else
+            echo "running internal commands"
             a11ywatch scan --url $WEBSITE_URL --save
           fi
 
@@ -72,10 +91,8 @@ jobs:
               fi
             fi
           fi
-
         env:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
-          EXTERNAL: true
           FAIL_ERROR_COUNT: ${{ secrets.FAIL_ERROR_COUNT }}
       - name: Post Stats to GitHub PR
         run: |
@@ -98,9 +115,6 @@ jobs:
             --data-raw "$body"
             
           fi
-
-        env:
-          WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
 
       - name: Stop A11yWatch Service
         if: ${{ !env.EXTERNAL }}

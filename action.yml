@@ -49,7 +49,6 @@ runs:
           ~/.cargo/git/db/
           target/
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
     - name: Install Rust
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
@@ -90,15 +89,28 @@ runs:
       id: a11ywatch-results-generator
       shell: bash
       run: |
+        #!/bin/bash
         # run scan request
         ext_var=${{ inputs.EXTERNAL }}
-        external_env=${ext_var:-"false"}
+        site_wide_scan_var=${{ inputs.SITE_WIDE }} 
 
-        if [ "$external_env" = "true" ]; then
-          # run remote scan via a11ywatch.com
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external --save
+        # set defaults to env CLI options
+        external_env=${ext_var:-false}
+        site_wide_scan=${site_wide_scan_var:-false}
+
+        if [[ "$site_wide_scan" = true ]] 
+        then
+          site_wide_scan="--all"
         else
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --save
+         site_wide_scan=""
+        fi
+
+        if [[ "$external_env" = true ]] 
+        then
+          # run remote scan via a11ywatch.com
+          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external --save $site_wide_scan
+        else
+          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --save $site_wide_scan
         fi
 
         results_path="$(a11ywatch --find-results)"
