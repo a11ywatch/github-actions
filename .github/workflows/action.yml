@@ -6,102 +6,11 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        id: cache
+        uses: actions/checkout@v3
+      - name: A11yWatch website scan
+        uses: ./
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
-        if: ${{ env.DOCKER_LAYER_CACHE }}
-      - name: Install Rust
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: curl https://sh.rustup.rs -sSf | sh -s -- -y
-      - name: Install the A11yWatch CLI
-        run: cargo install a11ywatch_cli --force
-      - name: Start A11yWatch Service
-        if: ${{ !env.EXTERNAL }}
-        run: a11ywatch start
-      - name: Wait for Healthy Container
-        if: ${{ !env.EXTERNAL }}
-        run: |
-          attempt=0
-
-          while [ $attempt -le 15 ]; do
-              attempt=$(( $attempt + 1 ))
-              echo "Waiting for server to be up (attempt: $attempt)..."
-              result=$(docker logs api)
-              if grep -q 'Server ready' <<< $result ; then
-                echo "A11yWatch ready!"
-                break
-              fi
-              sleep 0.3
-          done
-      - name: Scan Website
-        run: |
-          ext_var=${{ env.EXTERNAL }}
-          external_env=${ext_var:-"false"}
-
-          if [ "$external_env" = "true" ]; then
-            # run remote scan via a11ywatch.com
-            a11ywatch scan --url $WEBSITE_URL --external --save
-          else
-            a11ywatch scan --url $WEBSITE_URL --save
-          fi
-
-          results_path="$(a11ywatch --find-results)"
-
-          # get issues count
-          issues=$(jq '.website.issue | length' $results_path)
-          error_limit=${{ env.FAIL_ERROR_COUNT }}
-          error_count=${error_limit:-0}
-
-          if [ "$issues" -gt 0 ]; then
-            echo "Issues detected $issues"
-
-            if [ "$error_count" -gt 0 ]; then
-              if [ $issues -gt "$error_count" ]; then
-                  echo "Failed accessibility test!"
-                  exit 1
-              fi
-            fi
-          fi
-
-        env:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+          A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
           EXTERNAL: true
-          FAIL_ERROR_COUNT: ${{ secrets.FAIL_ERROR_COUNT }}
-      - name: Post Stats to GitHub PR
-        run: |
-          results_path="$(a11ywatch --find-results)"
-          gh_api_url="$(a11ywatch --github-api-url)"
-
-          pr_response=$(curl --location --request GET $gh_api_url \
-          -u $A11YWATCH_GH_USER:$A11YWATCH_GH_USER_TOKEN)
-
-          if [ $(echo $pr_response | jq length) -eq 0 ]; then
-            echo "No PR found to update"
-          else
-            pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
-
-            body="$(a11ywatch extract -p github)"
-
-            curl --location --request POST "$pr_comment_url" \
-            -u $A11YWATCH_GH_USER:$A11YWATCH_GH_USER_TOKEN \
-            --header 'Content-Type: application/json' \
-            --data-raw "$body"
-            
-          fi
-
-        env:
-          WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
-
-      - name: Stop A11yWatch Service
-        if: ${{ !env.EXTERNAL }}
-        run: a11ywatch stop
+          FAIL_ERROR_COUNT: 250
