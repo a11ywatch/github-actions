@@ -39,7 +39,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       id: cache
       with:
         path: |
@@ -57,7 +57,7 @@ runs:
 
     - name: Install the A11yWatch CLI
       shell: bash
-      run: cargo install a11ywatch_cli --force
+      run: cargo install a11ywatch_cli --version 0.0.88 --force
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -86,21 +86,22 @@ runs:
             sleep 0.3
         done
 
-    - name: A11ywatch Scan
+    - name: A11yWatch Scan
+      if: ${{ !inputs.EXTERNAL }}
+      shell: bash
+      run: a11ywatch scan --url a11ywatch.com --save
+
+    - name: A11yWatch Scan
+      if: ${{ inputs.EXTERNAL }}
+      shell: bash
+      run: a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external --save
+
+    - name: Scan Results Check
+      if: ${{ inputs.EXTERNAL }}
       id: a11ywatch-results-generator
       shell: bash
       run: |
-        # run scan request
-        ext_var=${{ inputs.EXTERNAL }}
-        external_env=${ext_var:-"false"}
-
-        if [ "$external_env" = "true" ]; then
-          # run remote scan via a11ywatch.com
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external --save
-        else
-          a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --save
-        fi
-
+        # get results path
         results_path="$(a11ywatch --find-results)"
 
         website_issues=$(jq '.website.issue | length' $results_path)
@@ -122,7 +123,6 @@ runs:
 
         echo "::set-output name=results::$(echo ${results_json})"
         echo "::set-output name=issues::$(echo ${website_issues})"
-
     - name: Post Stats to GitHub PR
       shell: bash
       if: ${{ github.event_name == 'pull_request' && !inputs.DISABLE_PR_STATS }}
