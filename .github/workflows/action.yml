@@ -12,5 +12,4 @@ jobs:
         with:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
           A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
-          EXTERNAL: true
           FAIL_ERROR_COUNT: 250

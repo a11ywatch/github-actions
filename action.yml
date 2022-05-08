@@ -57,7 +57,7 @@ runs:
 
     - name: Install the A11yWatch CLI
       shell: bash
-      run: cargo install a11ywatch_cli --version 0.0.88 --force
+      run: cargo install a11ywatch_cli --version 0.0.89 --force
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
