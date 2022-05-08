@@ -57,7 +57,7 @@ runs:
 
     - name: Install the A11yWatch CLI
       shell: bash
-      run: cargo install a11ywatch_cli --version 0.0.89 --force
+      run: cargo install a11ywatch_cli --version 0.0.90 --force
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -89,7 +89,7 @@ runs:
     - name: A11yWatch Scan
       if: ${{ !inputs.EXTERNAL }}
       shell: bash
-      run: a11ywatch scan --url a11ywatch.com --save
+      run: a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --save
 
     - name: A11yWatch Scan
       if: ${{ inputs.EXTERNAL }}
@@ -127,31 +127,34 @@ runs:
       shell: bash
       if: ${{ github.event_name == 'pull_request' && !inputs.DISABLE_PR_STATS }}
       run: |
-        # post github results if pr set
+        # post github
         INPUT_GH_TOKEN=${{ inputs.TOKEN }}
         GH_ACTION_TOKEN=${{ github.token }}
         GH_TOKEN="${INPUT_GH_TOKEN:-$GH_ACTION_TOKEN}"
 
         results_path="$(a11ywatch --find-results)"
         gh_api_url="$(a11ywatch --github-api-url)"
+        website_issues=$(jq '.website.issue | length' $results_path)
 
-        # check for open pr
-        pr_response=$(curl --location --request GET "$gh_api_url" \
-            -H "Authorization: token $GH_TOKEN")
+        # send pr results if issues exist
+        if [ "$website_issues" -gt 0 ]; then
+          # check for open pr
+          pr_response=$(curl --location --request GET "$gh_api_url" \
+              -H "Authorization: token $GH_TOKEN")
 
-        if [ $(echo $pr_response | jq length) -eq 0 ]; then
-          echo "No PR found to update"
-        else          
-          pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
+          if [ $(echo $pr_response | jq length) -eq 0 ]; then
+            echo "No PR found to update"
+          else          
+            pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
 
-          body="$(a11ywatch extract -p github)"
+            body="$(a11ywatch extract -p github)"
 
-          # post comment to github
-          curl --location --request POST "$pr_comment_url" \
-            -H "Authorization: token $GH_TOKEN" \
-            -H 'Content-Type: application/json' \
-            --data-raw "$body"
-
+            # post comment to github
+            curl --location --request POST "$pr_comment_url" \
+              -H "Authorization: token $GH_TOKEN" \
+              -H 'Content-Type: application/json' \
+              --data-raw "$body"
+          fi
         fi
 
     - name: Stop A11yWatch Service
