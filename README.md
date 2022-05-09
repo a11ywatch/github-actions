@@ -5,7 +5,7 @@ A GitHub action that runs accessibility and vitals test on your website that goe
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.2.47
+- uses: a11ywatch/github-action@v1.2.48
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_ERROR_COUNT: 10
