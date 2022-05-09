@@ -1,14 +1,16 @@
 # A11yWatch Github Action
 
-A GitHub action that runs accessibility and vitals test on your website that goes beyond what a linter can catch. Get actionable results rapidly with feedback posted into your PR. Determine when to fail a pipeline by setting an error limit to help bring an inclusive experience across every commit. This action provides the packed and ready A11yWatch CLI that allows you to bring the entire suite to use during any of your CI steps. If the `EXTERNAL` option is not set you have to run the action on a self hosted runner in order to make network request to the docker container.
+A GitHub action that runs accessibility and vitals test on your website that goes beyond what a linter can catch. Get actionable results rapidly with feedback posted into your PR. Determine when to fail a pipeline by setting an error limit to help bring an inclusive experience across every commit. This action provides the packed and ready A11yWatch CLI that allows you to bring the entire suite to use during any of your CI steps. Set `EXTERNAL` to a truthy value to make request to `https://api.a11ywatch.com` instead of the local container.
 
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.2.45
+- uses: a11ywatch/github-action@v1.2.47
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_ERROR_COUNT: 10
+    A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
+    EXTERNAL: true
 ```
 
 ### Action inputs

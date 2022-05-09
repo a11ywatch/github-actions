@@ -9,6 +9,5 @@ jobs:
       - name: A11yWatch website scan
         uses: ./
         with:
-          WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
-          A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
+          WEBSITE_URL: https://a11ywatch.com
           FAIL_ERROR_COUNT: 250

@@ -57,7 +57,7 @@ runs:
 
     - name: Install the A11yWatch CLI
       shell: bash
-      run: cargo install a11ywatch_cli --version 0.0.90 --force
+      run: cargo install a11ywatch_cli --version 0.0.94 --force
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -89,12 +89,12 @@ runs:
     - name: A11yWatch Scan
       if: ${{ !inputs.EXTERNAL }}
       shell: bash
-      run: a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --save
+      run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --save
 
     - name: A11yWatch Scan
       if: ${{ inputs.EXTERNAL }}
       shell: bash
-      run: a11ywatch scan --url "${{ inputs.WEBSITE_URL }}" --external --save
+      run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --external --save
 
     - name: Scan Results Check
       if: ${{ inputs.EXTERNAL }}
