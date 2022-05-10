@@ -5,12 +5,10 @@ A GitHub action that runs accessibility and vitals test on your website that goe
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.2.48
+- uses: a11ywatch/github-action@v1.3.2
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_ERROR_COUNT: 10
-    A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
-    EXTERNAL: true
 ```
 
 ### Action inputs
@@ -37,7 +35,7 @@ An example based on the above reference configuration creates a comment on pull 
 
 ![Example](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/gh-action.png?raw=true "A11yWatch Logo")
 
-## To Come
+## Todo
 
 `FAIL_ERROR_COUNT` is going to tie into the `errors` type of issues and not the total between `errors` and `warnings`. There will be seperate inputs to adjust when to fail either if both exceed amount or single. Example
 
