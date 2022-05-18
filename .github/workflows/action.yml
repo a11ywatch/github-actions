@@ -11,3 +11,4 @@ jobs:
         with:
           WEBSITE_URL: https://a11ywatch.com
           FAIL_ERROR_COUNT: 250
+          SITE_WIDE: true
