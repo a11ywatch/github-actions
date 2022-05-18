@@ -162,13 +162,16 @@ runs:
           else          
             pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
 
-            body="$(a11ywatch extract -p github)"
+            # extract the results to a file
+            body="$(a11ywatch --github-results-path extract --platform github)"
+            
+            # get results of the file path 
+            gh_file="@$(a11ywatch --github-results-path)"
 
             # post comment to github
-            curl --location --request POST "$pr_comment_url" \
+            curl -X POST -d "$gh_file" "$pr_comment_url" \
               -H "Authorization: token $GH_TOKEN" \
-              -H 'Content-Type: application/json' \
-              --data-raw "$body"
+              -H 'Content-Type: application/json'
           fi
         fi
 
