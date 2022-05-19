@@ -13,6 +13,10 @@ inputs:
     description: Use the A11yWatch external api hosted.
     required: false
     default: ""
+  SITE_WIDE:
+    description: Perform a site-wide scan.
+    required: false
+    default: ""
   FAIL_ERROR_COUNT:
     description: Use to fail the CI if the amount of issues is greater than the count.
     required: false
@@ -87,14 +91,24 @@ runs:
         done
 
     - name: A11yWatch Scan
-      if: ${{ !inputs.EXTERNAL }}
+      if: ${{ !inputs.EXTERNAL && !inputs.SITE_WIDE }}
       shell: bash
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --save
 
     - name: A11yWatch Scan
-      if: ${{ inputs.EXTERNAL }}
+      if: ${{ inputs.EXTERNAL && !inputs.SITE_WIDE }}
       shell: bash
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --external --save
+
+    - name: A11yWatch Crawl
+      if: ${{ !inputs.EXTERNAL && inputs.SITE_WIDE }}
+      shell: bash
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --save
+
+    - name: A11yWatch Crawl
+      if: ${{ inputs.EXTERNAL && inputs.SITE_WIDE }}
+      shell: bash
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --external --save
 
     - name: Scan Results Check
       if: ${{ inputs.EXTERNAL }}
@@ -104,7 +118,7 @@ runs:
         # get results path
         results_path="$(a11ywatch --find-results)"
 
-        website_issues=$(jq '.website.issue | length' $results_path)
+        website_issues=$(a11ywatch --results-issues)
         error_limit=${{ inputs.FAIL_ERROR_COUNT }}
         error_count=${error_limit:-0}
 
@@ -123,6 +137,7 @@ runs:
 
         echo "::set-output name=results::$(echo ${results_json})"
         echo "::set-output name=issues::$(echo ${website_issues})"
+
     - name: Post Stats to GitHub PR
       shell: bash
       if: ${{ github.event_name == 'pull_request' && !inputs.DISABLE_PR_STATS }}
@@ -134,7 +149,7 @@ runs:
 
         results_path="$(a11ywatch --find-results)"
         gh_api_url="$(a11ywatch --github-api-url)"
-        website_issues=$(jq '.website.issue | length' $results_path)
+        website_issues=$(a11ywatch --results-issues)
 
         # send pr results if issues exist
         if [ "$website_issues" -gt 0 ]; then
@@ -147,13 +162,16 @@ runs:
           else          
             pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
 
-            body="$(a11ywatch extract -p github)"
+            # extract the results to a file
+            body="$(a11ywatch --github-results-path extract --platform github)"
+            
+            # get results of the file path 
+            gh_file="@$(a11ywatch --github-results-path)"
 
             # post comment to github
-            curl --location --request POST "$pr_comment_url" \
+            curl -X POST -d "$gh_file" "$pr_comment_url" \
               -H "Authorization: token $GH_TOKEN" \
-              -H 'Content-Type: application/json' \
-              --data-raw "$body"
+              -H 'Content-Type: application/json'
           fi
         fi
 

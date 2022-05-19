@@ -10,4 +10,7 @@ jobs:
         uses: ./
         with:
           WEBSITE_URL: https://a11ywatch.com
-          FAIL_ERROR_COUNT: 250
+          SITE_WIDE: true
+          FAIL_ERROR_COUNT: 1200
+          EXTERNAL: true
+          A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}

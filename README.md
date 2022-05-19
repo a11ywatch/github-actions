@@ -5,7 +5,7 @@ A GitHub action that runs accessibility and vitals test on your website that goe
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.3.2
+- uses: a11ywatch/github-action@v1.4.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_ERROR_COUNT: 10
@@ -18,6 +18,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | Name               | Description                                                                                                                                                                                                              | Default        |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
 | `WEBSITE_URL`      | Website domain to scan (Start with http or https).                                                                                                                                                                       |                |
+| `SITE_WIDE`        | Site-wide scanning across all pages ( May take awhile locally on free action). Use with `EXTERNAL=true` for very fast crawling.                                                                                          |                |
 | `FAIL_ERROR_COUNT` | Determine whether to fail the CI if issues has errors above theshold..                                                                                                                                                   | 0              |
 | `EXTERNAL`         | Use the A11yWatch remote api for fast results. If this is set `A11YWATCH_TOKEN` is needed.                                                                                                                               |                |
 | `DISABLE_PR_STATS` | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
@@ -44,3 +45,7 @@ FAIL_ERROR_COUNT=10 # when errors are above this number fail CI
 FAIL_WARNING_COUNT=100 # when warnings are above this number fail CI
 FAIL_ISSUES_COUNT=200 # when both warnings and errors are above this number fail CI
 ```
+
+## Extra Info
+
+If `SITE_WIDE` is enabled it may take awhile for your job to finish locally. For that use the `EXTERNAL` option to use the A11yWatch server resources. This requires an API key and is limited to 2 site-wide scans a day for free accounts and other 3 API request like single page scans or image detection.
