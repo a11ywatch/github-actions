@@ -5,7 +5,7 @@ A GitHub action that runs accessibility and vitals test on your website that goe
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.4.0
+- uses: a11ywatch/github-action@v1.4.1
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_ERROR_COUNT: 10
@@ -18,9 +18,9 @@ All inputs are **optional** except $WEBSITE_URL.
 | Name               | Description                                                                                                                                                                                                              | Default        |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
 | `WEBSITE_URL`      | Website domain to scan (Start with http or https).                                                                                                                                                                       |                |
-| `SITE_WIDE`        | Site-wide scanning across all pages ( May take awhile locally on free action). Use with `EXTERNAL=true` for very fast crawling.                                                                                          |                |
+| `SITE_WIDE`        | Site-wide scanning across all pages ( May take awhile locally on free action). Use with `EXTERNAL=true` for very fast crawling.                                                                                          | false          |
 | `FAIL_ERROR_COUNT` | Determine whether to fail the CI if issues has errors above theshold..                                                                                                                                                   | 0              |
-| `EXTERNAL`         | Use the A11yWatch remote api for fast results. If this is set `A11YWATCH_TOKEN` is needed.                                                                                                                               |                |
+| `EXTERNAL`         | Use the A11yWatch remote api for fast results. If this is set `A11YWATCH_TOKEN` is needed.                                                                                                                               | false          |
 | `DISABLE_PR_STATS` | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
 | `TOKEN`            | `GITHUB_TOKEN` (permissions `contents: write` and `pull-requests: write`) or a `repo` scoped [Personal Access Token (PAT)](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). | `GITHUB_TOKEN` |
 | `A11YWATCH_TOKEN`  | The A11yWatch api token to use to identify a user.                                                                                                                                                                       |                |
