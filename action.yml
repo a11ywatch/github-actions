@@ -1,5 +1,9 @@
 name: A11yWatch - The Accessibility Suite
-on: [pull_request, push]
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches: [$default-branch]
 author: A11yWatch
 branding:
   icon: "shield"
@@ -68,6 +72,19 @@ runs:
       shell: bash
       run: a11ywatch --set-token ${{ inputs.A11YWATCH_TOKEN }}
 
+    - name: Increase TCP limits
+      if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
+      shell: bash
+      run: |
+        # increase Linux TCP buffer limits
+        sudo sysctl -w net.core.rmem_max=2097152
+        sudo sysctl -w net.core.wmem_max=2097152
+
+        # increase Linux autotuning TCP buffer limits
+        sudo sysctl -w net.ipv4.tcp_rmem="4096 87380 2097152"
+        sudo sysctl -w net.ipv4.tcp_wmem="4096 65536 2097152"
+        sudo sysctl --system
+
     - name: Start A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
@@ -84,28 +101,30 @@ runs:
             echo "Waiting for server to be up (attempt: $attempt)..."
             result=$(docker logs api)
             if grep -q 'Server ready' <<< $result ; then
+              # perform slight setup delay for gRPC instance
+              sleep 5
               echo "A11yWatch ready!"
               break
             fi
             sleep 0.3
         done
 
-    - name: A11yWatch Scan
+    - name: A11yWatch Scan [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'false' }}
       shell: bash
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --save
 
-    - name: A11yWatch Scan
+    - name: A11yWatch Scan [External]
       if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'false' }}
       shell: bash
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --external --save
 
-    - name: A11yWatch Crawl
+    - name: A11yWatch Crawl [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --save
+      run: docker logs crawler --follow & (a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --save)
 
-    - name: A11yWatch Crawl
+    - name: A11yWatch Crawl [External]
       if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'true' }}
       shell: bash
       run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --external --save
