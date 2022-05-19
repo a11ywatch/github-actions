@@ -12,19 +12,19 @@ inputs:
   EXTERNAL:
     description: Use the A11yWatch external api hosted.
     required: false
-    default: ""
+    default: false
   SITE_WIDE:
     description: Perform a site-wide scan.
     required: false
-    default: ""
+    default: false
   FAIL_ERROR_COUNT:
     description: Use to fail the CI if the amount of issues is greater than the count.
     required: false
-    default: ""
+    default: 0
   DISABLE_PR_STATS:
     description: Disable the A11yWatch bot from posting on your PR.
     required: false
-    default: ""
+    default: false
   TOKEN:
     description: The github token to use for posting comments and issues.
     required: false
@@ -69,12 +69,12 @@ runs:
       run: a11ywatch --set-token ${{ inputs.A11YWATCH_TOKEN }}
 
     - name: Start A11yWatch Service
-      if: ${{ !inputs.EXTERNAL }}
+      if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
       run: a11ywatch start
 
     - name: Wait for Healthy Container
-      if: ${{ !inputs.EXTERNAL }}
+      if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
       run: |
         attempt=0
@@ -91,27 +91,26 @@ runs:
         done
 
     - name: A11yWatch Scan
-      if: ${{ !inputs.EXTERNAL && !inputs.SITE_WIDE }}
+      if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'false' }}
       shell: bash
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --save
 
     - name: A11yWatch Scan
-      if: ${{ inputs.EXTERNAL && !inputs.SITE_WIDE }}
+      if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'false' }}
       shell: bash
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --external --save
 
     - name: A11yWatch Crawl
-      if: ${{ !inputs.EXTERNAL && inputs.SITE_WIDE }}
+      if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
       shell: bash
       run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --save
 
     - name: A11yWatch Crawl
-      if: ${{ inputs.EXTERNAL && inputs.SITE_WIDE }}
+      if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'true' }}
       shell: bash
       run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --external --save
 
     - name: Scan Results Check
-      if: ${{ inputs.EXTERNAL }}
       id: a11ywatch-results-generator
       shell: bash
       run: |
@@ -140,7 +139,7 @@ runs:
 
     - name: Post Stats to GitHub PR
       shell: bash
-      if: ${{ github.event_name == 'pull_request' && !inputs.DISABLE_PR_STATS }}
+      if: ${{ github.event_name == 'pull_request' && inputs.DISABLE_PR_STATS  == 'false' }}
       run: |
         # post github
         INPUT_GH_TOKEN=${{ inputs.TOKEN }}
