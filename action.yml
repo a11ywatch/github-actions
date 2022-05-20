@@ -21,8 +21,16 @@ inputs:
     description: Perform a site-wide scan.
     required: false
     default: false
-  FAIL_ERROR_COUNT:
-    description: Use to fail the CI if the amount of issues is greater than the count.
+  FAIL_TOTAL_COUNT:
+    description: Use to fail the CI if the amount of issues of type errors and warnings is greater than the count.
+    required: false
+    default: 0
+  FAIL_ERRORS_COUNT:
+    description: Use to fail the CI if the amount of issues of type errors is greater than the count.
+    required: false
+    default: 0
+  FAIL_WARNINGS_COUNT:
+    description: Use to fail the CI if the amount of issues of type warnings is greater than the count.
     required: false
     default: 0
   DISABLE_PR_STATS:
@@ -131,25 +139,43 @@ runs:
         # get results path
         results_path="$(a11ywatch --find-results)"
 
-        website_issues=$(a11ywatch --results-issues)
-        error_limit=${{ inputs.FAIL_ERROR_COUNT }}
-        error_count=${error_limit:-0}
+        website_issues_total=$(a11ywatch --results-issues)
+        website_issues_errors=$(a11ywatch --results-issues-errors)
+        website_issues_warnings=$(a11ywatch --results-issues-warnings)
 
-        if [ "$website_issues" -gt 0 ]; then
-          echo "Issues detected: $website_issues"
+        total_limit=${{ inputs.FAIL_TOTAL_COUNT }}
+        errors_limit=${{ inputs.FAIL_ERRORS_COUNT }}
+        warnings_limit=${{ inputs.FAIL_WARNINGS_COUNT }}
 
-          if [ "$error_count" -gt 0 ]; then
-            if [ $website_issues -gt "$error_count" ]; then
-                echo "Failed accessibility test!"
-                exit 1
-            fi
+        total_count=${total_limit:-0}
+        errors_count=${errors_limit:-0}
+        warnings_count=${warnings_limit:-0}
+
+        if [ "$total_count" -gt 0 ]; then
+          if [ $website_issues_total -gt "$total_count" ]; then
+              echo "Failed accessibility test. Total errors and warnings exceeded limit!"
+              exit 1
+          fi
+        fi
+
+        if [ "$errors_count" -gt 0 ]; then
+          if [ $website_issues_errors -gt "$errors_count" ]; then
+              echo "Failed accessibility test. Errors exceeded limit!"
+              exit 1
+          fi
+        fi
+
+        if [ "$warnings_count" -gt 0 ]; then
+          if [ $website_issues_warnings -gt "$warnings_count" ]; then
+              echo "Failed accessibility test. Warnings exceeded limit!"
+              exit 1
           fi
         fi
 
         results_json="$(a11ywatch -r)"
 
         echo "::set-output name=results::$(echo ${results_json})"
-        echo "::set-output name=issues::$(echo ${website_issues})"
+        echo "::set-output name=issues::$(echo ${website_issues_total})"
 
     - name: Post Stats to GitHub PR
       shell: bash
