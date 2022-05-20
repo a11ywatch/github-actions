@@ -1,29 +1,32 @@
 # A11yWatch Github Action
 
-A GitHub action that runs accessibility and vitals test on your website that goes beyond what a linter can catch. Get actionable results rapidly with feedback posted into your PR. Determine when to fail a pipeline by setting an error limit to help bring an inclusive experience across every commit. This action provides the packed and ready A11yWatch CLI that allows you to bring the entire suite to use during any of your CI steps. Set `EXTERNAL` to a truthy value to make request to `https://api.a11ywatch.com` instead of the local container.
+A GitHub action that runs accessibility and vitals test on your website that goes beyond what a linter can catch.
+The reports give detailed insight on WCAG2.1+ including other web accessibility issues with recommendations like missing alts (using machine learning and AI), color contrast, and much more.
 
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.5.0
+- uses: a11ywatch/github-action@v1.5.1
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
-    FAIL_ERROR_COUNT: 10
+    FAIL_ERRORS_COUNT: 10
 ```
 
 ### Action inputs
 
 All inputs are **optional** except $WEBSITE_URL.
 
-| Name               | Description                                                                                                                                                                                                              | Default        |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
-| `WEBSITE_URL`      | Website domain to scan (Start with http or https).                                                                                                                                                                       |                |
-| `SITE_WIDE`        | Site-wide scanning across all pages.                                                                                                                                                                                     | true           |
-| `FAIL_ERROR_COUNT` | Determine whether to fail the CI if issues has errors above theshold..                                                                                                                                                   | 0              |
-| `EXTERNAL`         | Use the A11yWatch remote api for fast results. If this is set `A11YWATCH_TOKEN` is needed.                                                                                                                               | false          |
-| `DISABLE_PR_STATS` | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
-| `TOKEN`            | `GITHUB_TOKEN` (permissions `contents: write` and `pull-requests: write`) or a `repo` scoped [Personal Access Token (PAT)](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). | `GITHUB_TOKEN` |
-| `A11YWATCH_TOKEN`  | The A11yWatch api token to use to identify a user.                                                                                                                                                                       |                |
+| Name                  | Description                                                                                                                                                                                                              | Default        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
+| `WEBSITE_URL`         | Website domain to scan (Start with http:// or https://).                                                                                                                                                                 |                |
+| `SITE_WIDE`           | Site-wide scanning across all pages.                                                                                                                                                                                     | true           |
+| `FAIL_TOTAL_COUNT`    | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs.                                                                                    | 0              |
+| `FAIL_ERRORS_COUNT`   | Determine whether to fail the CI if total issues with errors exceed the counter.                                                                                                                                         | 0              |
+| `FAIL_WARNINGS_COUNT` | Determine whether to fail the CI if total issues with warnings exceed the counter.                                                                                                                                       | 0              |
+| `EXTERNAL`            | Use the A11yWatch remote api for fast results. If this is set `A11YWATCH_TOKEN` is needed.                                                                                                                               | false          |
+| `DISABLE_PR_STATS`    | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
+| `TOKEN`               | `GITHUB_TOKEN` (permissions `contents: write` and `pull-requests: write`) or a `repo` scoped [Personal Access Token (PAT)](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). | `GITHUB_TOKEN` |
+| `A11YWATCH_TOKEN`     | The A11yWatch api token to use to identify a user.                                                                                                                                                                       |                |
 
 ### Action Outputs
 
@@ -35,17 +38,3 @@ All inputs are **optional** except $WEBSITE_URL.
 An example based on the above reference configuration creates a comment on pull requests that look like this:
 
 ![Example](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/gh-action.png?raw=true "A11yWatch Logo")
-
-## Todo
-
-`FAIL_ERROR_COUNT` is going to tie into the `errors` type of issues and not the total between `errors` and `warnings`. There will be seperate inputs to adjust when to fail either if both exceed amount or single. Example
-
-```sh
-FAIL_ERROR_COUNT=10 # when errors are above this number fail CI
-FAIL_WARNING_COUNT=100 # when warnings are above this number fail CI
-FAIL_ISSUES_COUNT=200 # when both warnings and errors are above this number fail CI
-```
-
-## Extra Info
-
-If `SITE_WIDE` is enabled it may take awhile for your job to finish locally. For that use the `EXTERNAL` option to use the A11yWatch server resources. This requires an API key and is limited to 2 site-wide scans a day for free accounts and other 3 API request like single page scans or image detection.
