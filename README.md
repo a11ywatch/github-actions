@@ -11,7 +11,7 @@ Determine when to fail a pipeline by setting an error limit to help bring an inc
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.5.1
+- uses: a11ywatch/github-action@v1.5.2
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_TOTAL_COUNT: 10

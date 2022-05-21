@@ -105,7 +105,7 @@ runs:
             result=$(docker logs api)
             if grep -q 'Server ready' <<< $result ; then
               # perform slight setup delay for gRPC instance
-              sleep 5
+              sleep 1.5
               echo "A11yWatch ready!"
               break
             fi
