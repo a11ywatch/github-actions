@@ -73,7 +73,7 @@ runs:
 
     - name: Install the A11yWatch CLI
       shell: bash
-      run: cargo install a11ywatch_cli --force
+      run: cargo install a11ywatch_cli || true
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -109,13 +109,11 @@ runs:
       run: |
         attempt=0
 
-        while [ $attempt -le 10 ]; do
+        while [ $attempt -le 30 ]; do
             attempt=$(( $attempt + 1 ))
             echo "Waiting for server to be up (attempt: $attempt)..."
             result=$(docker logs api)
-            if grep -q 'Server ready' <<< $result ; then
-              # perform slight setup delay for gRPC instance
-              sleep 5
+            if grep "^Server ready" <<< $result; then
               echo "A11yWatch ready!"
               break
             fi
