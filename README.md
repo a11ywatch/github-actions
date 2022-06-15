@@ -6,7 +6,7 @@ The reports give detailed insight on WCAG2.1+ including other web accessibility 
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.6.1
+- uses: a11ywatch/github-action@v1.6.2
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_ERRORS_COUNT: 10
