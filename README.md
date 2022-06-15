@@ -41,4 +41,4 @@ All inputs are **optional** except $WEBSITE_URL.
 
 An example based on the above reference configuration creates a comment on pull requests that look like this:
 
-![Example](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/gh-action.png?raw=true "A11yWatch Logo")
+![Example of action results posting to Github](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/gh-action.png?raw=true "A11yWatch Logo")
