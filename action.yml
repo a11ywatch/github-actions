@@ -1,4 +1,4 @@
-name: A11yWatch - The Accessibility Suite
+name: Web Accessibility Evaluation
 on:
   push:
     branches: [$default-branch]
@@ -8,7 +8,7 @@ author: A11yWatch
 branding:
   icon: "shield"
   color: "gray-dark"
-description: Setup A11yWatch CLI in your GitHub Actions workflow.
+description: Web accessibility testing real time and AI at scale.
 inputs:
   WEBSITE_URL:
     description: Website domain to scan

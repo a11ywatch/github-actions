@@ -1,12 +1,15 @@
-# A11yWatch Github Action
+# a11ywatch-github-action
+
+[![A11yWatchBot](https://github.com/A11yWatch/github-action/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/A11yWatch/github-action/actions/workflows/action.yml)
 
 A GitHub action that runs accessibility and vitals test on your website that goes beyond what a linter can catch.
-The reports give detailed insight on WCAG2.1+ including other web accessibility issues with recommendations like missing alts (using machine learning and AI), color contrast, and much more.
+The reports give detailed insight on WCAG2.1+ including other web accessibility issues with precise descriptions for missing alts (using machine learning and AI), color contrast, and much more.
+This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/tree/main/cli) onto your pipeline starting the suite locally or from a remote external connection.
 
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.6.2
+- uses: a11ywatch/github-action@v1.6.4
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FAIL_ERRORS_COUNT: 10
