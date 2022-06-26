@@ -21,6 +21,14 @@ inputs:
     description: Perform a site-wide scan.
     required: false
     default: false
+  SUBDOMAINS:
+    description: Include all subdomains.
+    required: false
+    default: false
+  TLD:
+    description: Include all tld extensions.
+    required: false
+    default: false
   FAIL_TOTAL_COUNT:
     description: Use to fail the CI if the amount of issues of type errors and warnings is greater than the count.
     required: false
@@ -133,7 +141,7 @@ runs:
     - name: A11yWatch Crawl [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --save
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --save ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}}
 
     - name: A11yWatch Crawl [External]
       if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'true' }}
