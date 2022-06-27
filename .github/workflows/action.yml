@@ -10,7 +10,9 @@ jobs:
         uses: ./
         with:
           WEBSITE_URL: https://a11ywatch.com
-          FAIL_TOTAL_COUNT: 1400
+          FAIL_TOTAL_COUNT: 3500
           EXTERNAL: false
           SITE_WIDE: true
+          SUBDOMAINS: true
+          TLD: false
           # A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}

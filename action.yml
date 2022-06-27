@@ -21,6 +21,14 @@ inputs:
     description: Perform a site-wide scan.
     required: false
     default: false
+  SUBDOMAINS:
+    description: Include all subdomains.
+    required: false
+    default: false
+  TLD:
+    description: Include all tld extensions.
+    required: false
+    default: false
   FAIL_TOTAL_COUNT:
     description: Use to fail the CI if the amount of issues of type errors and warnings is greater than the count.
     required: false
@@ -73,7 +81,7 @@ runs:
 
     - name: Install the A11yWatch CLI
       shell: bash
-      run: cargo install a11ywatch_cli -f
+      run: cargo install a11ywatch_cli --force && a11ywatch -V
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -98,6 +106,7 @@ runs:
         sudo apt-get update -y
         sudo apt-get install -y qemu gcc-aarch64-linux-gnu qemu-user-static
         docker pull --platform linux/arm64 a11ywatch/crawler
+
     - name: Start A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
@@ -115,6 +124,7 @@ runs:
             result=$(docker logs api)
             if grep "^Server ready" <<< $result; then
               echo "A11yWatch ready!"
+               sleep 8
               break
             fi
             sleep 0.3
@@ -133,12 +143,12 @@ runs:
     - name: A11yWatch Crawl [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --save
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --save
 
     - name: A11yWatch Crawl [External]
       if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} --external --save
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --external --save
 
     - name: Scan Results Check
       id: a11ywatch-results-generator
@@ -161,21 +171,21 @@ runs:
 
         if [ "$total_count" -gt 0 ]; then
           if [ $website_issues_total -gt "$total_count" ]; then
-              echo "Failed accessibility test. Total errors and warnings exceeded limit!"
+              echo "Failed accessibility test. $website_issues_total total errors and warnings exceeded limit!"
               exit 1
           fi
         fi
 
         if [ "$errors_count" -gt 0 ]; then
           if [ $website_issues_errors -gt "$errors_count" ]; then
-              echo "Failed accessibility test. Errors exceeded limit!"
+              echo "Failed accessibility test. $website_issues_errors errors exceeded the limit!"
               exit 1
           fi
         fi
 
         if [ "$warnings_count" -gt 0 ]; then
           if [ $website_issues_warnings -gt "$warnings_count" ]; then
-              echo "Failed accessibility test. Warnings exceeded limit!"
+              echo "Failed accessibility test. $website_issues_warnings warnings exceeded limit!"
               exit 1
           fi
         fi
@@ -187,12 +197,10 @@ runs:
 
     - name: Post Stats to GitHub PR
       shell: bash
-      if: ${{ github.event_name == 'pull_request' && inputs.DISABLE_PR_STATS  == 'false' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.DISABLE_PR_STATS == 'false' }}
       run: |
         # post github
-        INPUT_GH_TOKEN=${{ inputs.TOKEN }}
-        GH_ACTION_TOKEN=${{ github.token }}
-        GH_TOKEN="${INPUT_GH_TOKEN:-$GH_ACTION_TOKEN}"
+        GH_TOKEN="${{ inputs.TOKEN || github.token }}"
 
         results_path="$(a11ywatch --find-results)"
         gh_api_url="$(a11ywatch --github-api-url)"

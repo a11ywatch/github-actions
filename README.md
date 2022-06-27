@@ -3,15 +3,17 @@
 [![A11yWatchBot](https://github.com/A11yWatch/github-action/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/A11yWatch/github-action/actions/workflows/action.yml)
 
 A GitHub action that runs accessibility and vitals test on your website that goes beyond what a linter can catch.
-The reports give detailed insight on WCAG2.1+ including other web accessibility issues with precise descriptions for missing alts (using machine learning and AI), color contrast, and much more.
+The reports give detailed insight on WCAG2.1+ including other web accessibility issues with accurate descriptions for missing alts (machine learning and AI), color contrast, and much more.
 This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/tree/main/cli) onto your pipeline starting the suite locally or from a remote external connection.
 
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.6.4
+- uses: a11ywatch/github-action@v1.7.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+    SUBDOMAINS: true
+    TLD: true
     FAIL_ERRORS_COUNT: 10
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
@@ -25,6 +27,8 @@ All inputs are **optional** except $WEBSITE_URL.
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
 | `WEBSITE_URL`                      | Website domain to scan (Start with http:// or https://).                                                                                                                                                                 |                |
 | `SITE_WIDE`                        | Site-wide scanning across all pages.                                                                                                                                                                                     | true           |
+| `SUBDOMAINS`                       | Include all subdomains (required SITE_WIDE=true).                                                                                                                                                                        | true           |
+| `TLD`                              | Include all tld extensions (required SITE_WIDE=true).                                                                                                                                                                    | true           |
 | `FAIL_TOTAL_COUNT`                 | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs.                                                                                    | 0              |
 | `FAIL_ERRORS_COUNT`                | Determine whether to fail the CI if total issues with errors exceed the counter.                                                                                                                                         | 0              |
 | `FAIL_WARNINGS_COUNT`              | Determine whether to fail the CI if total issues with warnings exceed the counter.                                                                                                                                       | 0              |
