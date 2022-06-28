@@ -14,5 +14,5 @@ jobs:
           EXTERNAL: false
           SITE_WIDE: true
           SUBDOMAINS: true
-          TLD: false
+          TLD: true
           # A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
