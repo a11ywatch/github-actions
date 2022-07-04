@@ -8,7 +8,7 @@ author: A11yWatch
 branding:
   icon: "shield"
   color: "gray-dark"
-description: Web accessibility testing real time and AI at scale.
+description: Web accessibility testing for the future.
 inputs:
   WEBSITE_URL:
     description: Website domain to scan
