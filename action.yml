@@ -13,6 +13,10 @@ inputs:
   WEBSITE_URL:
     description: Website domain to scan
     required: true
+  FIX:
+    description: Attempt to apply recommendations to code.
+    required: false
+    default: false
   EXTERNAL:
     description: Use the A11yWatch external api hosted.
     required: false
@@ -124,22 +128,22 @@ runs:
     - name: A11yWatch Scan [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'false' }}
       shell: bash
-      run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --save
+      run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
     - name: A11yWatch Scan [External]
       if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'false' }}
       shell: bash
-      run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --external --save
+      run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --external --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
     - name: A11yWatch Crawl [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --save
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
     - name: A11yWatch Crawl [External]
       if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --external --save
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --external --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
     - name: Scan Results Check
       id: a11ywatch-results-generator
@@ -220,6 +224,13 @@ runs:
               -H 'Content-Type: application/json'
           fi
         fi
+
+    - uses: EndBug/add-and-commit@v9
+      if: ${{ inputs.FIX == 'true' }}
+      with:
+        default_author: github_actions
+        message: "fix(accessibility): add recommendations from scan"
+        committer_name: A11yWatch Github Action
 
     - name: Stop A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}
