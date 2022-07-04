@@ -9,7 +9,7 @@ This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.8.1
+- uses: a11ywatch/github-action@v1.8.2
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FIX: true
