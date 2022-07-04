@@ -48,6 +48,8 @@ All inputs are **optional** except $WEBSITE_URL.
 | `results` | The results of the report as json. |         |
 | `issues`  | The amount of issues found         |         |
 
-An example based on the above reference configuration creates a comment on pull requests that look like this:
+An example based on the above reference configuration creates a comment on pull requests that look like this and possible code fix commits:
 
-![Example of action results posting to Github](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/gh-action.png?raw=true "A11yWatch Logo")
+![Example of action results posting to Github for the website A11yWatch.com](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/gh-action.png?raw=true)
+
+![Example of code fix changes being applied from scan and pushed to github. Example shows a Siemese Cat and Eskimo Husky alt property being auto-filled to code.](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/code-fix.png?raw=true)
