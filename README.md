@@ -9,9 +9,10 @@ This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.7.1
+- uses: a11ywatch/github-action@v1.8.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+    FIX: true
     SUBDOMAINS: true
     TLD: true
     FAIL_ERRORS_COUNT: 10
@@ -27,6 +28,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------- |
 | `WEBSITE_URL`                      | Website domain to scan (Start with http:// or https://).                                                                                                                                                                 |                |
 | `SITE_WIDE`                        | Site-wide scanning across all pages.                                                                                                                                                                                     | false          |
+| `FIX`                              | Attempt to apply recommendations to code and commit to github.                                                                                                                                                           | false          |
 | `SUBDOMAINS`                       | Include all subdomains (required SITE_WIDE=true).                                                                                                                                                                        | true           |
 | `TLD`                              | Include all tld extensions (required SITE_WIDE=true).                                                                                                                                                                    | true           |
 | `FAIL_TOTAL_COUNT`                 | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs.                                                                                    | 0              |
