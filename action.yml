@@ -57,6 +57,14 @@ inputs:
     description: The a11ywatch token to use for authenticated to the API.
     required: false
     default: ""
+  COMPUTER_VISION_ENDPOINT:
+    description: The Computer Vision endpoint to use for advanced AI.
+    required: false
+    default: ""
+  COMPUTER_VISION_SUBSCRIPTION_KEY:
+    description: The Computer Vision subscription key to use for advanced AI.
+    required: false
+    default: ""
 outputs:
   results:
     description: "Website Results"
