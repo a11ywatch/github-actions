@@ -100,7 +100,7 @@ runs:
     - name: Install the A11yWatch CLI
       if: steps.cache-cargo.outputs.cache-hit == 'false'
       shell: bash
-      run: cargo install a11ywatch_cli
+      run: cargo install a11ywatch_cli --force
 
     - name: Update A11yWatch CLI
       if: steps.cache-cargo.outputs.cache-hit == 'true'
