@@ -76,6 +76,8 @@ runs:
 
     - uses: actions/cache@v3
       id: cache
+      env:
+        cache-name: cache-cargo-crates
       with:
         path: |
           ~/.cargo/bin/
@@ -83,16 +85,22 @@ runs:
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
           target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('~/.cargo/registry/cache/**/*') }}
 
     - name: Install Rust
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
-      run: curl https://sh.rustup.rs -sSf | sh -s -- -y
+      run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cargo install cargo-update
 
     - name: Install the A11yWatch CLI
+      if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
-      run: cargo install a11ywatch_cli --force && a11ywatch -V
+      run: cargo install a11ywatch_cli
+
+    - name: Update A11yWatch CLI
+      if: steps.cache.outputs.cache-hit == 'true'
+      shell: bash
+      run: cargo install-update a11ywatch_cli
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
