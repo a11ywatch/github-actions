@@ -57,6 +57,14 @@ inputs:
     description: The a11ywatch token to use for authenticated to the API.
     required: false
     default: ""
+  COMPUTER_VISION_ENDPOINT:
+    description: The Computer Vision endpoint to use for advanced AI.
+    required: false
+    default: ""
+  COMPUTER_VISION_SUBSCRIPTION_KEY:
+    description: The Computer Vision subscription key to use for advanced AI.
+    required: false
+    default: ""
 outputs:
   results:
     description: "Website Results"
@@ -113,12 +121,12 @@ runs:
       run: a11ywatch --set-token ${{ inputs.A11YWATCH_TOKEN }}
 
     - name: Configure Computer Vision API KEY
-      if: ${{ inputs.A11YWATCH_TOKEN }}
+      if: ${{ inputs.COMPUTER_VISION_SUBSCRIPTION_KEY }}
       shell: bash
       run: a11ywatch --set-cv-token ${{ inputs.COMPUTER_VISION_SUBSCRIPTION_KEY }}
 
     - name: Configure Computer Vision URL
-      if: ${{ inputs.A11YWATCH_TOKEN }}
+      if: ${{ inputs.COMPUTER_VISION_ENDPOINT }}
       shell: bash
       run: a11ywatch --set-cv-url ${{ inputs.COMPUTER_VISION_ENDPOINT }}
 
