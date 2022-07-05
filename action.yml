@@ -248,7 +248,6 @@ runs:
     - uses: EndBug/add-and-commit@v9
       if: ${{ inputs.FIX == 'true' }}
       with:
-        default_author: github_actions
         message: "fix(accessibility): add recommendations from scan"
         committer_name: GitHub Actions
 
