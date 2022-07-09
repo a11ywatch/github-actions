@@ -15,4 +15,5 @@ jobs:
           SITE_WIDE: true
           SUBDOMAINS: true
           TLD: false
+          # UPGRADE: true
           # A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
