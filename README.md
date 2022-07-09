@@ -9,7 +9,7 @@ This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.9.0
+- uses: a11ywatch/github-action@v1.9.2
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FIX: true
@@ -40,6 +40,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `DISABLE_PR_STATS`                 | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
 | `TOKEN`                            | `GITHUB_TOKEN` (permissions `contents: write` and `pull-requests: write`) or a `repo` scoped [Personal Access Token (PAT)](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). | `GITHUB_TOKEN` |
 | `A11YWATCH_TOKEN`                  | The A11yWatch api token to use to identify a user.                                                                                                                                                                       |                |
+| `UPGRADE`                          | Upgrade the docker images before testing to latest.                                                                                                                                                                      |                |
 
 ### Action Outputs
 
