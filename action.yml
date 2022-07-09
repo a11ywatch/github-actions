@@ -142,12 +142,12 @@ runs:
     - name: Build A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
-      run: a11ywatch build --standalone ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
+      run: a11ywatch build ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
 
     - name: Start A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
-      run: a11ywatch start --standalone
+      run: a11ywatch start
 
     - name: Wait for Healthy Container
       if: ${{ inputs.EXTERNAL == 'false' }}
@@ -160,7 +160,7 @@ runs:
             result=$(docker logs a11ywatch)
             if grep "^Server ready" <<< $result; then
               echo "A11yWatch ready!"
-               sleep 3.3
+               sleep 4.5
               break
             fi
             sleep 0.3
