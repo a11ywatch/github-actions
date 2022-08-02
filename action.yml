@@ -8,7 +8,7 @@ author: A11yWatch
 branding:
   icon: "shield"
   color: "gray-dark"
-description: Web accessibility testing for the future.
+description: Powerful web accessibility testing.
 inputs:
   WEBSITE_URL:
     description: Website domain to scan
@@ -50,9 +50,13 @@ inputs:
     required: false
     default: false
   TOKEN:
-    description: The github token to use for posting comments and issues.
+    description: The github token to use for posting comments.
     required: false
     default: ""
+  LIST:
+    description: Report the output to github as a pass or fail list.
+    required: false
+    default: false
   A11YWATCH_TOKEN:
     description: The a11ywatch token to use for authenticated to the API.
     required: false
@@ -66,7 +70,7 @@ inputs:
     required: false
     default: ""
   UPGRADE:
-    description: Upgrade the docker images to latest.
+    description: Upgrade the CLI and docker images to latest across runs.
     required: false
     default: false
 outputs:
@@ -110,7 +114,7 @@ runs:
       run: curl https://sh.rustup.rs -sSf | sh -s -- -y
 
     - name: Install Cargo Update
-      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' || inputs.UPGRADE == 'true' }}
+      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
       shell: bash
       run: cargo install cargo-update
 
@@ -119,8 +123,8 @@ runs:
       shell: bash
       run: cargo install a11ywatch_cli --force
 
-    - name: Update A11yWatch CLI
-      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' || inputs.UPGRADE == 'true' }}
+    - name: Check for A11yWatch CLI Updates
+      if: ${{ steps.cache-cargo.outputs.cache-hit == 'true' }}
       shell: bash
       run: cargo install-update -i a11ywatch_cli
 
@@ -142,12 +146,12 @@ runs:
     - name: Build A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
-      run: a11ywatch build ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
+      run: a11ywatch build --standalone ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
 
     - name: Start A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
-      run: a11ywatch start
+      run: a11ywatch start --standalone
 
     - name: Wait for Healthy Container
       if: ${{ inputs.EXTERNAL == 'false' }}
@@ -157,7 +161,7 @@ runs:
         while [ $attempt -le 30 ]; do
             attempt=$(( $attempt + 1 ))
             echo "Waiting for server to be up (attempt: $attempt)..."
-            result=$(docker logs api)
+            result=$(docker logs a11ywatch)
             if grep "^Server ready" <<< $result; then
               echo "A11yWatch ready!"
                sleep 4.5
@@ -254,7 +258,7 @@ runs:
             pr_comment_url=$(echo $pr_response | jq -r ".[]._links.comments.href")
 
             # extract the results to a file
-            body="$(a11ywatch --github-results-path extract --platform github)"
+            body="$( a11ywatch --github-results-path extract --platform github ${{ inputs.LIST == 'true' && '-l' || ''}} )"
             
             # get results of the file path 
             gh_file="@$(a11ywatch --github-results-path)"
