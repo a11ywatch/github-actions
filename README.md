@@ -2,7 +2,7 @@
 
 [![A11yWatchBot](https://github.com/A11yWatch/github-action/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/A11yWatch/github-action/actions/workflows/action.yml)
 
-A GitHub action that runs actionable accessibility reports on your website that goes beyond what a linter can catch.
+A GitHub action that runs multithreaded actionable accessibility reports on your website that goes beyond what a linter can catch.
 
 This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/tree/main/cli) onto your pipeline starting the suite locally or from a remote external connection.
 
@@ -51,8 +51,6 @@ All inputs are **optional** except $WEBSITE_URL.
 | `results` | The results of the report as json. |         |
 | `issues`  | The amount of issues found         |         |
 
-An example based on the above reference configuration creates a comment on pull requests that look like this and possible code fix commits:
+## LICENSE
 
-![Example of action results posting to Github for the website A11yWatch.com](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/gh-action.png?raw=true)
-
-![Example of code fix changes being applied from scan and pushed to github. Example shows a Siemese Cat and Eskimo Husky alt property being auto-filled to code.](https://raw.githubusercontent.com/A11yWatch/Project-Screenshots/master/code-fix.png?raw=true)
+check the license file in the root of the project.
