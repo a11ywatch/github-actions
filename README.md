@@ -2,7 +2,7 @@
 
 [![A11yWatchBot](https://github.com/A11yWatch/github-action/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/A11yWatch/github-action/actions/workflows/action.yml)
 
-A GitHub action that runs multithreaded actionable accessibility reports on your website that goes beyond what a linter can catch.
+A GitHub action that runs multithreaded actionable accessibility reports on your website with real browsers.
 
 This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/tree/main/cli) onto your pipeline starting the suite locally or from a remote external connection.
 
