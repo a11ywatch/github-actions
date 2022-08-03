@@ -18,7 +18,7 @@ inputs:
     required: false
     default: false
   EXTERNAL:
-    description: Use the A11yWatch external api hosted.
+    description: Use the A11yWatch external API hosted.
     required: false
     default: false
   SITE_WIDE:
@@ -101,15 +101,12 @@ runs:
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-          target/
-        key: ${{ runner.os }}-cargo-${{ env.cache-name }}-${{ hashFiles('~/.cargo/registry/cache/**/*') }}
+        key: ${{ runner.os }}-
         restore-keys: |
-          ${{ runner.os }}-cargo-${{ env.cache-name }}-
-          ${{ runner.os }}-cargo-
           ${{ runner.os }}-
 
     - name: Install Rust
-      if: ${{ steps.cache-cargo.outputs.cache-hit == 'false' || inputs.UPGRADE == 'true' }}
+      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
       shell: bash
       run: curl https://sh.rustup.rs -sSf | sh -s -- -y
 
@@ -119,12 +116,11 @@ runs:
       run: cargo install cargo-update
 
     - name: Install the A11yWatch CLI
-      if: ${{ steps.cache-cargo.outputs.cache-hit == 'false' }}
+      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
       shell: bash
       run: cargo install a11ywatch_cli --force
 
     - name: Check for A11yWatch CLI Updates
-      if: ${{ steps.cache-cargo.outputs.cache-hit == 'true' }}
       shell: bash
       run: cargo install-update -i a11ywatch_cli
 
