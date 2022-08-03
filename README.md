@@ -9,7 +9,7 @@ This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.10.2
+- uses: a11ywatch/github-action@v1.10.4
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     FIX: true
@@ -17,6 +17,7 @@ This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/
     TLD: true
     FAIL_ERRORS_COUNT: 15
     LIST: true
+    UPGRADE: false
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
 ```
@@ -50,6 +51,11 @@ All inputs are **optional** except $WEBSITE_URL.
 | --------- | ---------------------------------- | ------- |
 | `results` | The results of the report as json. |         |
 | `issues`  | The amount of issues found         |         |
+
+## Common Issues
+
+If you experience issues on your CI you may have to set the `UPGRADE` input to true in order to get the latest docker images.
+We need docker in order to build the appliciation in quickly since we have some services that need to compile that may take awhile.
 
 ## LICENSE
 
