@@ -2,7 +2,7 @@ name: Pa11y Tests Compare
 on: [pull_request]
 jobs:
   build:
-    name: Building site and running Pa11y-CI Compare
+    name: Building site and running Pa11y-CI Comparison
     runs-on: ubuntu-latest
 
     steps:

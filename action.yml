@@ -109,7 +109,7 @@ runs:
           ${{ runner.os }}-
 
     - name: Install Rust
-      if: ${{ steps.cache-cargo.outputs.cache-hit == 'false' || inputs.UPGRADE == 'true' }}
+      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
       shell: bash
       run: curl https://sh.rustup.rs -sSf | sh -s -- -y
 
@@ -119,7 +119,7 @@ runs:
       run: cargo install cargo-update
 
     - name: Install the A11yWatch CLI
-      if: ${{ steps.cache-cargo.outputs.cache-hit == 'false' }}
+      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
       shell: bash
       run: cargo install a11ywatch_cli --force
 
