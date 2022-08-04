@@ -83,7 +83,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v3.0.2
       if: ${{ inputs.FIX == 'true' }}
       with:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -91,7 +91,7 @@ runs:
         clean: false
 
     - name: Cache cargo crates
-      uses: actions/cache@v3
+      uses: actions/cache@v3.0.5
       id: cache-cargo
       env:
         cache-name: cache-cargo-crates
@@ -101,22 +101,20 @@ runs:
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-        key: ${{ runner.os }}-
-        restore-keys: |
-          ${{ runner.os }}-
+        key: ~/.cargo/bin/a11ywatch
 
     - name: Install Rust
-      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
+      if: steps.cache-cargo.outputs.cache-hit != 'true'
       shell: bash
       run: curl https://sh.rustup.rs -sSf | sh -s -- -y
 
     - name: Install Cargo Update
-      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
+      if: steps.cache-cargo.outputs.cache-hit != 'true'
       shell: bash
       run: cargo install cargo-update
 
     - name: Install the A11yWatch CLI
-      if: ${{ steps.cache-cargo.outputs.cache-hit != 'true' }}
+      if: steps.cache-cargo.outputs.cache-hit != 'true'
       shell: bash
       run: cargo install a11ywatch_cli --force
 
