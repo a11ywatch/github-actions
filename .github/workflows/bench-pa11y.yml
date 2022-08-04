@@ -1,8 +1,8 @@
-name: Pa11y Tests Compare
+name: Bench Pa11y-CI
 on: [pull_request]
 jobs:
   build:
-    name: Building site and running Pa11y-CI Comparison
+    name: Bench Website Test
     runs-on: ubuntu-latest
 
     steps:
