@@ -1,8 +1,8 @@
-name: Tests
+name: Bench A11yWatch
 on: [pull_request]
 jobs:
   run-container:
-    name: End to End
+    name: Bench Website Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,8 +13,8 @@ jobs:
           FAIL_TOTAL_COUNT: 10000
           EXTERNAL: false
           SITE_WIDE: true
-          SUBDOMAINS: true
-          TLD: true
+          SUBDOMAINS: false
+          TLD: false
           LIST: true
           UPGRADE: false
           # A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
