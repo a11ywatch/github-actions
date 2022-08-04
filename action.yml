@@ -18,7 +18,7 @@ inputs:
     required: false
     default: false
   EXTERNAL:
-    description: Use the A11yWatch external API hosted.
+    description: Use the A11yWatch external API.
     required: false
     default: false
   SITE_WIDE:
@@ -30,7 +30,7 @@ inputs:
     required: false
     default: false
   TLD:
-    description: Include all tld extensions.
+    description: Include all TLD extensions.
     required: false
     default: false
   FAIL_TOTAL_COUNT:
@@ -46,7 +46,7 @@ inputs:
     required: false
     default: 0
   DISABLE_PR_STATS:
-    description: Disable the A11yWatch bot from posting on your PR.
+    description: Disable the bot from posting on your PR.
     required: false
     default: false
   TOKEN:
@@ -58,7 +58,7 @@ inputs:
     required: false
     default: false
   A11YWATCH_TOKEN:
-    description: The a11ywatch token to use for authenticated to the API.
+    description: The A11yWatch token to authenticate to the API.
     required: false
     default: ""
   COMPUTER_VISION_ENDPOINT:
@@ -91,7 +91,7 @@ runs:
         clean: false
 
     - name: Cache cargo crates
-      uses: actions/cache@v3.0.5
+      uses: actions/cache@v3
       id: cache-cargo
       env:
         cache-name: cache-cargo-crates
@@ -103,20 +103,13 @@ runs:
           ~/.cargo/git/db/
         key: ~/.cargo/bin/a11ywatch
 
-    - name: Install Rust
+    - name: Install Rust, Cargo-Update, and A11yWatch CLI
       if: steps.cache-cargo.outputs.cache-hit != 'true'
       shell: bash
-      run: curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-    - name: Install Cargo Update
-      if: steps.cache-cargo.outputs.cache-hit != 'true'
-      shell: bash
-      run: cargo install cargo-update
-
-    - name: Install the A11yWatch CLI
-      if: steps.cache-cargo.outputs.cache-hit != 'true'
-      shell: bash
-      run: cargo install a11ywatch_cli --force
+      run: |
+        curl https://sh.rustup.rs -sSf | sh -s -- -y
+        cargo install cargo-update
+        cargo install a11ywatch_cli
 
     - name: Check for A11yWatch CLI Updates
       shell: bash
