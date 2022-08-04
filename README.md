@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/a11ywatch/github-actions/actions/workflows/action.yml/badge.svg)](https://github.com/a11ywatch/github-actions/actions/workflows/action.yml)
 
-A GitHub action that runs actionable accessibility reports on your website that is around 100-1000x faster than the rest and loads of features.
+A GitHub action that runs actionable accessibility reports on your website that is around 1000x faster than the rest and loads of features.
 
 This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/tree/main/cli) onto your pipeline starting the suite locally or from a remote external connection.
 
@@ -54,10 +54,6 @@ All inputs are **optional** except $WEBSITE_URL.
 
 ## Benches
 
-Using `https://a11ywatch.com` as test website that is fully static we compared our tool against the most popular tool Pa11y-CI.
-
-Currently it takes our github action a bit longer to start if its a new run since we need to compile a couple of native tools before we can start.
-
 ```sh
 ----------------------
 linux ubuntu-latest
@@ -79,29 +75,29 @@ Test url: `https://a11ywatch.com`
 
 runs with 10 samples:
 
-|                                   | `libraries`           |
-| :-------------------------------- | :-------------------- |
-| **`A11yWatch: crawl 10 samples`** | `3 s` (✅ **1.00x**)  |
-| **`Pa11y-CI: crawl 10 samples`**  | `45 s` (✅ **1.00x**) |
+|                        | `libraries`           |
+| :--------------------- | :-------------------- |
+| **`A11yWatch: crawl`** | `3 s` (✅ **1.00x**)  |
+| **`Pa11y-CI: crawl`**  | `45 s` (✅ **1.00x**) |
 
 ### crawl-speed (Large Website)
 
 ```sh
 Test url: `https://www.hbo.com`
 
-30,000 pages.
+7500 pages.
 ```
 
-On a larger website our parallel native action runs over 10,000x faster.
+On a larger website A11yWatch action runs over 60x-1000x faster depending on CPUs/hardware.
 
-runs with 10 samples:
+|                        | `libraries`              |
+| :--------------------- | :----------------------- |
+| **`A11yWatch: crawl`** | `35 mins` (✅ **1.00x**) |
+| **`Pa11y-CI: crawl`**  | `50+ hr` (✅ **1.00x**)  |
 
-|                                   | `libraries`             |
-| :-------------------------------- | :---------------------- |
-| **`A11yWatch: crawl 10 samples`** | `6 mins` (✅ **1.00x**) |
-| **`Pa11y-CI: crawl 10 samples`**  | `6+ hr` (✅ **1.00x**)  |
+When `AI_DISABLED` is set to true the run for `A11yWatch` increases to about 50 mins.
 
-Pa11y-CI actually could not finish the crawl as it exceeds the github action free limits.
+Pa11y-CI actually could not finish the crawl as it exceeds the github action free limits at 6 hours. It handled around 1000 pages before failing at the 6 hour mark.
 
 ## Common Issues
 
