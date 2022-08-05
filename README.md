@@ -92,7 +92,7 @@ On a larger website A11yWatch action runs over 60x-1000x faster depending on CPU
 
 |                        | `libraries`              |
 | :--------------------- | :----------------------- |
-| **`A11yWatch: crawl`** | `35 mins` (✅ **1.00x**) |
+| **`A11yWatch: crawl`** | `13 mins` (✅ **1.00x**) |
 | **`Pa11y-CI: crawl`**  | `50+ hr` (✅ **1.00x**)  |
 
 When `AI_DISABLED` is set to true the run for `A11yWatch` increases to about 50 mins.
