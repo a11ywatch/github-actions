@@ -1,10 +1,8 @@
-# a11ywatch
+# github-action
 
 [![Tests](https://github.com/a11ywatch/github-actions/actions/workflows/action.yml/badge.svg)](https://github.com/a11ywatch/github-actions/actions/workflows/action.yml)
 
-A GitHub action that runs actionable accessibility reports on your website that is around 1000x faster than the rest and loads of features.
-
-This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/tree/main/cli) onto your pipeline starting the suite locally or from a remote external connection.
+A GitHub action that runs actionable accessibility reports on your website that is over 10,000x faster than the rest and tons of features.
 
 ### Usage
 
@@ -12,11 +10,11 @@ This action installs the [A11yWatch CLI](https://github.com/A11yWatch/a11ywatch/
 - uses: a11ywatch/github-action@v1.10.8
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
-    FIX: true
     SUBDOMAINS: true
     TLD: true
     FAIL_ERRORS_COUNT: 15
     LIST: true
+    FIX: true
     UPGRADE: false
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
@@ -88,20 +86,20 @@ Test url: `https://www.hbo.com`
 7500 pages.
 ```
 
-On a larger website A11yWatch action runs over 60x-1000x faster depending on CPUs/hardware.
+On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on CPUs/hardware.
 
 |                        | `libraries`              |
 | :--------------------- | :----------------------- |
-| **`A11yWatch: crawl`** | `35 mins` (✅ **1.00x**) |
+| **`A11yWatch: crawl`** | `13 mins` (✅ **1.00x**) |
 | **`Pa11y-CI: crawl`**  | `50+ hr` (✅ **1.00x**)  |
 
-When `AI_DISABLED` is set to true the run for `A11yWatch` increases to about 50 mins.
+When `AI_DISABLED` is set to true the run for `A11yWatch` increases to about 39 mins.
 
-Pa11y-CI actually could not finish the crawl as it exceeds the github action free limits at 6 hours. It handled around 1000 pages before failing at the 6 hour mark.
+[Pa11y-CI](https://github.com/pa11y/pa11y-ci) could not finish the crawl as it exceeds the github action free limits at 6 hours. It handled around 1000 pages before failing at the 6 hour mark.
 
 ## Common Issues
 
-If you experience issues on your CI you may have to set the `UPGRADE` input to true in order to get the latest docker images.
+If you experience issues on your CI you may have to toggle the `UPGRADE` input to true in order to get the latest docker images.
 We need docker in order to build the appliciation in quickly since we have some services that need to compile that may take awhile.
 
 ## LICENSE
