@@ -13,5 +13,4 @@ jobs:
       - run: npm install -g @axe-core/cli
       - name: Run axe
         run: |
-          npm i -g @axe-core/cli@next
-          axe https://www.hbo.com --exit
+          axe https://a11ywatch.com

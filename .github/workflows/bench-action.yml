@@ -13,8 +13,8 @@ jobs:
       - name: A11yWatch website scan
         uses: ./
         with:
-          WEBSITE_URL: https://www.hbo.com
-          FAIL_TOTAL_COUNT: 10000000000
+          WEBSITE_URL: https://a11ywatch.com
+          FAIL_TOTAL_COUNT: 0
           EXTERNAL: false
           SITE_WIDE: true
           SUBDOMAINS: false

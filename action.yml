@@ -69,6 +69,10 @@ inputs:
     description: The Computer Vision subscription key to use for advanced AI.
     required: false
     default: ""
+  SLIM:
+    description: Add slim gRPC client usage to gather issue stats.
+    required: false
+    default: false
   UPGRADE:
     description: Upgrade the CLI and docker images to latest across runs.
     required: false
@@ -106,7 +110,7 @@ runs:
       run: |
         curl https://sh.rustup.rs -sSf | sh -s -- -y
         cargo install cargo-update
-        cargo install a11ywatch_cli
+        cargo install a11ywatch_cli ${{ inputs.SLIM == 'true' && '--features grpc' || '' }}
 
     - name: Check for A11yWatch CLI Updates
       shell: bash
