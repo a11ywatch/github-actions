@@ -1,0 +1,17 @@
+name: Bench Axe
+
+on: [pull_request]
+jobs:
+  axe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm install -g @axe-core/cli
+      - name: Run axe
+        run: |
+          npm install -g @axe-core/cli
+          axe https://www.hbo.com --exit
