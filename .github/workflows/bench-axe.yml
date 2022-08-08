@@ -1,6 +1,9 @@
 name: Bench Axe
 
-on: [pull_request]
+on:
+  pull_request:
+    branches-ignore:
+      - main
 jobs:
   axe:
     runs-on: ubuntu-latest
@@ -13,4 +16,4 @@ jobs:
       - run: npm install -g @axe-core/cli
       - name: Run axe
         run: |
-          axe https://a11ywatch.com
+          axe https://vercel.com
