@@ -16,5 +16,3 @@ jobs:
           SUBDOMAINS: true
           TLD: true
           LIST: true
-          UPGRADE: false
-          # A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}

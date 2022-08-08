@@ -7,7 +7,7 @@ A GitHub action that runs actionable accessibility reports on your website that 
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.10.8
+- uses: a11ywatch/github-action@v1.11.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
@@ -41,6 +41,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `DISABLE_PR_STATS`                 | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
 | `TOKEN`                            | `GITHUB_TOKEN` (permissions `contents: write` and `pull-requests: write`) or a `repo` scoped [Personal Access Token (PAT)](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). | `GITHUB_TOKEN` |
 | `A11YWATCH_TOKEN`                  | The A11yWatch API token to use to identify a user.                                                                                                                                                                       |                |
+| `SLIM`                             | Use the gRPC client to gather reports - only displays stats, useful for large websites (no code generation, no outputs, just pure stats) \*note: Must remove action to toggle or set on first time runs.                 |                |
 | `UPGRADE`                          | Upgrade the docker images before testing to latest.                                                                                                                                                                      |                |
 
 ### Action Outputs
@@ -77,6 +78,7 @@ runs with 10 samples:
 | :--------------------- | :-------------------- |
 | **`A11yWatch: crawl`** | `3 s` (✅ **1.00x**)  |
 | **`Pa11y-CI: crawl`**  | `45 s` (✅ **1.00x**) |
+| **`Axe: crawl`**       | `N/A` (✅ **1.00x**)  |
 
 ### crawl-speed (Large Website)
 
@@ -92,6 +94,7 @@ On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on 
 | :--------------------- | :----------------------- |
 | **`A11yWatch: crawl`** | `13 mins` (✅ **1.00x**) |
 | **`Pa11y-CI: crawl`**  | `50+ hr` (✅ **1.00x**)  |
+| **`Axe: crawl`**       | `N/A` (✅ **1.00x**)     |
 
 When `AI_DISABLED` is set to true the run for `A11yWatch` increases to about 39 mins.
 
