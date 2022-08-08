@@ -41,7 +41,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `DISABLE_PR_STATS`                 | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
 | `TOKEN`                            | `GITHUB_TOKEN` (permissions `contents: write` and `pull-requests: write`) or a `repo` scoped [Personal Access Token (PAT)](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). | `GITHUB_TOKEN` |
 | `A11YWATCH_TOKEN`                  | The A11yWatch API token to use to identify a user.                                                                                                                                                                       |                |
-| `SLIM`                             | Use the gRPC client to gather reports - only displays stats, useful for large websites [no code generation].                                                                                                             |                |
+| `SLIM`                             | Use the gRPC client to gather reports - only displays stats, useful for large websites (no code generation, no outputs, just pure stats) \*note: Must remove action to toggle or set on first time runs.                 |                |
 | `UPGRADE`                          | Upgrade the docker images before testing to latest.                                                                                                                                                                      |                |
 
 ### Action Outputs
