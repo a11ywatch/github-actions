@@ -53,6 +53,8 @@ All inputs are **optional** except $WEBSITE_URL.
 
 ## Benches
 
+The hardware specs for results:
+
 ```sh
 ----------------------
 linux ubuntu-latest
@@ -64,13 +66,13 @@ linux ubuntu-latest
 
 ### Benchmark Results
 
-```sh
+The results for crawling a website that is small - large.
+
+#### crawl-speed
+
 Test url: `https://a11ywatch.com`
 
 25 pages
-```
-
-### crawl-speed
 
 runs with 10 samples:
 
@@ -80,15 +82,13 @@ runs with 10 samples:
 | **`Pa11y-CI: crawl`**  | `45 s` (✅ **1.00x**) |
 | **`Axe: crawl`**       | `N/A` (✅ **1.00x**)  |
 
-### crawl-speed (Large Website)
+#### crawl-speed (Large Website)
 
-```sh
 Test url: `https://www.hbo.com`
 
 7500 pages.
-```
 
-On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on CPUs/hardware.
+runs with 10 samples:
 
 |                        | `libraries`               |
 | :--------------------- | :------------------------ |
@@ -96,7 +96,11 @@ On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on 
 | **`Pa11y-CI: crawl`**  | `50+ hr` (✅ **1.00x**)   |
 | **`Axe: crawl`**       | `N/A` (✅ **1.00x**)      |
 
-When `AI_DISABLED` is set to true the run for `A11yWatch` increases to about 39 mins.
+### Benchmark Info
+
+On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on CPUs/hardware.
+
+When `AI_DISABLED` is set to true the run for `A11yWatch` may increase.
 
 [Pa11y-CI](https://github.com/pa11y/pa11y-ci) could not finish the crawl as it exceeds the github action free limits at 6 hours. It handled around 1000 pages before failing at the 6 hour mark.
 
