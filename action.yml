@@ -150,7 +150,7 @@ runs:
             attempt=$(( $attempt + 1 ))
             echo "Waiting for server to be up (attempt: $attempt)..."
             result=$(docker logs a11ywatch)
-            if grep "^Server ready" <<< $result; then
+            if grep "^chrome launched and connected" <<< $result; then
               echo "A11yWatch ready!"
                sleep 4.5
               break
