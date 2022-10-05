@@ -46,10 +46,9 @@ All inputs are **optional** except $WEBSITE_URL.
 
 ### Action Outputs
 
-| Name      | Description                        | Default |
-| --------- | ---------------------------------- | ------- |
-| `results` | The results of the report as json. |         |
-| `issues`  | The amount of issues found         |         |
+| Name     | Description                | Default |
+| -------- | -------------------------- | ------- |
+| `issues` | The amount of issues found |         |
 
 ## Benches
 
@@ -114,6 +113,10 @@ We need docker in order to build the appliciation in quickly since we have some 
 If you are trying to run a website that is running `localhost` inside a docker container you need to use your computers `hostname` instead.
 
 Set the input using the `$(hostname)` prefix like `WEBSITE_URL=$(hostname):3000` with the port to test.
+
+## CLI
+
+In order to get the results of the run in json run `results_json="$(a11ywatch -r)"` across any step after the action.
 
 ## LICENSE
 
