@@ -16,3 +16,4 @@ jobs:
           SUBDOMAINS: true
           TLD: true
           LIST: true
+          UPGRADE: true
