@@ -74,7 +74,7 @@ inputs:
     required: false
     default: false
   UPGRADE:
-    description: Upgrade the CLI and docker images to latest across runs.
+    description: Upgrade the CLI to latest across runs.
     required: false
     default: false
 outputs:
@@ -102,12 +102,13 @@ runs:
         key: ~/.cargo/bin/a11ywatch
 
     - name: Install Rust, Cargo-Update, Protobuf Compiler, and A11yWatch CLI
-      if: steps.cache-cargo.outputs.cache-hit != 'true'
+      if: steps.cache-cargo.outputs.cache-hit != 'true' || ${{ inputs.UPGRADE }}
       shell: bash
       run: |
         curl https://sh.rustup.rs -sSf | sh -s -- -y
         sudo apt update && sudo apt upgrade -y
         sudo apt install -y protobuf-compiler libprotobuf-dev
+        cargo install website_crawler
         cargo install cargo-update
         cargo install a11ywatch_cli ${{ inputs.SLIM == 'true' && '--features grpc' || '' }}
 
@@ -133,29 +134,17 @@ runs:
     - name: Build A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
-      run: a11ywatch build --standalone ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
+      run: a11ywatch build -l
 
     - name: Start A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
-      run: a11ywatch start --standalone
+      run: a11ywatch start -l
 
     - name: Wait for Healthy Container
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
-      run: |
-        attempt=0
-        while [ $attempt -le 30 ]; do
-            attempt=$(( $attempt + 1 ))
-            echo "Waiting for server to be up (attempt: $attempt)..."
-            result=$(docker logs a11ywatch)
-            if grep "^chrome launched and connected" <<< $result; then
-              echo "A11yWatch ready!"
-               sleep 4.5
-              break
-            fi
-            sleep 0.3
-        done
+      run: sleep 1
 
     - name: A11yWatch Scan [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'false' }}
@@ -263,4 +252,4 @@ runs:
     - name: Stop A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}
       shell: bash
-      run: a11ywatch stop
+      run: a11ywatch stop -l

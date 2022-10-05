@@ -7,7 +7,7 @@ A GitHub action that runs actionable accessibility reports on your website that 
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.12.0
+- uses: a11ywatch/github-action@v1.13.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
