@@ -104,11 +104,13 @@ runs:
           ~/.cargo/
         key: ~/.cargo/bin/a11ywatch
 
-    - name: Install Rust, Cargo-Update, and A11yWatch CLI
+    - name: Install Rust, Cargo-Update, Protobuf Compiler, and A11yWatch CLI
       if: steps.cache-cargo.outputs.cache-hit != 'true'
       shell: bash
       run: |
         curl https://sh.rustup.rs -sSf | sh -s -- -y
+        sudo apt update && sudo apt upgrade -y
+        sudo apt install -y protobuf-compiler libprotobuf-dev
         cargo install cargo-update
         cargo install a11ywatch_cli ${{ inputs.SLIM == 'true' && '--features grpc' || '' }}
 
