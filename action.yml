@@ -78,9 +78,6 @@ inputs:
     required: false
     default: false
 outputs:
-  results:
-    description: "Website Results"
-    value: ${{ steps.a11ywatch-results-generator.outputs.results }}
   issues:
     description: "The amount of issues found on the page"
     value: ${{ steps.a11ywatch-results-generator.outputs.issues }}
@@ -104,11 +101,13 @@ runs:
           ~/.cargo/
         key: ~/.cargo/bin/a11ywatch
 
-    - name: Install Rust, Cargo-Update, and A11yWatch CLI
+    - name: Install Rust, Cargo-Update, Protobuf Compiler, and A11yWatch CLI
       if: steps.cache-cargo.outputs.cache-hit != 'true'
       shell: bash
       run: |
         curl https://sh.rustup.rs -sSf | sh -s -- -y
+        sudo apt update && sudo apt upgrade -y
+        sudo apt install -y protobuf-compiler libprotobuf-dev
         cargo install cargo-update
         cargo install a11ywatch_cli ${{ inputs.SLIM == 'true' && '--features grpc' || '' }}
 
@@ -218,9 +217,6 @@ runs:
           fi
         fi
 
-        results_json="$(a11ywatch -r)"
-
-        echo "::set-output name=results::$(echo ${results_json})"
         echo "::set-output name=issues::$(echo ${website_issues_total})"
 
     - name: Post Stats to GitHub PR
