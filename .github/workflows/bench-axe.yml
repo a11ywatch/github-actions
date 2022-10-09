@@ -16,4 +16,4 @@ jobs:
       - run: npm install -g @axe-core/cli
       - name: Run axe
         run: |
-          axe https://vercel.com
+          axe https://a11ywatch.com
