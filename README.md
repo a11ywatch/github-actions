@@ -2,7 +2,9 @@
 
 [![Tests](https://github.com/a11ywatch/github-actions/actions/workflows/action.yml/badge.svg)](https://github.com/a11ywatch/github-actions/actions/workflows/action.yml)
 
-A GitHub action that runs actionable accessibility reports on your website that is over 10,000x faster than the rest and tons of features.
+A feature rich GitHub action that runs actionable accessibility reports on your website that can handle large workloads.
+
+Some of the primary features include pass/fail testing, code fixes, and detailed reports.
 
 ### Usage
 
@@ -75,11 +77,11 @@ Test url: `https://a11ywatch.com`
 
 runs with 10 samples:
 
-|                        | `libraries`           |
-| :--------------------- | :-------------------- |
-| **`A11yWatch: crawl`** | `1 s` (✅ **1.00x**)  |
-| **`Pa11y-CI: crawl`**  | `45 s` (✅ **1.00x**) |
-| **`Axe: crawl`**       | `N/A` (✅ **1.00x**)  |
+|                        | `libraries`            |
+| :--------------------- | :--------------------- |
+| **`A11yWatch: crawl`** | `0.4 s` (✅ **1.00x**) |
+| **`Pa11y-CI: crawl`**  | `45 s` (✅ **1.00x**)  |
+| **`Axe: crawl`**       | `N/A` (✅ **1.00x**)   |
 
 #### crawl-speed (Large Website)
 
