@@ -217,7 +217,7 @@ runs:
           fi
         fi
 
-        echo "::set-output name=issues::$(echo ${website_issues_total})"
+        echo "issues=$(echo ${website_issues_total})" >> $GITHUB_OUTPUT
 
     - name: Post Stats to GitHub PR
       shell: bash
