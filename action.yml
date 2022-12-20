@@ -101,19 +101,19 @@ runs:
           ~/.cargo/
         key: ~/.cargo/bin/a11ywatch
 
-    - name: Install Rust, Cargo-Update, Protobuf Compiler, and A11yWatch CLI
+    - name: Install Rust, Cargo-Update, Protobuf Compiler
       if: steps.cache-cargo.outputs.cache-hit != 'true'
       shell: bash
       run: |
         curl https://sh.rustup.rs -sSf | sh -s -- -y
         sudo apt update && sudo apt upgrade -y
         sudo apt install -y protobuf-compiler libprotobuf-dev
-        cargo install cargo-update
-        cargo install a11ywatch_cli ${{ inputs.SLIM == 'true' && '--features grpc' || '' }}
 
-    - name: Check for A11yWatch CLI Updates
-      shell: bash
-      run: cargo install-update -i a11ywatch_cli
+    - name: A11yWatch CLI Install
+      uses: baptiste0928/cargo-install@v1
+      with:
+        crate: a11ywatch_cli
+        version: "0.8.22"
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -217,7 +217,7 @@ runs:
           fi
         fi
 
-        echo "::set-output name=issues::$(echo ${website_issues_total})"
+        echo "issues=$(echo ${website_issues_total})" >> $GITHUB_OUTPUT
 
     - name: Post Stats to GitHub PR
       shell: bash
