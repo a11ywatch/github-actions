@@ -110,7 +110,7 @@ runs:
         sudo apt install -y protobuf-compiler libprotobuf-dev
 
     - name: A11yWatch CLI Install
-      uses: baptiste0928/cargo-install@v1.3.0
+      uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
         version: "0.8.22"
