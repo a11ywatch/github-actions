@@ -113,7 +113,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.8.22"
+        version: "0.8.34"
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}

@@ -9,7 +9,7 @@ Some of the primary features include pass/fail testing, code fixes, and detailed
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.12.1
+- uses: a11ywatch/github-action@v1.12.2
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
@@ -103,7 +103,7 @@ On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on 
 
 When `AI_DISABLED` is set to true the run for `A11yWatch` may increase.
 
-[Pa11y-CI](https://github.com/pa11y/pa11y-ci) could not finish the crawl as it exceeds the github action free limits at 6 hours. It handled around 1000 pages before failing at the 6 hour mark.
+Pa11y-CI could not finish the crawl as it exceeds the github action free limits at 6 hours. It handled around 1000 pages before failing at the 6 hour mark.
 
 ## Common Issues
 
