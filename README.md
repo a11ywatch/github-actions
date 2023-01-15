@@ -9,7 +9,7 @@ Some of the primary features include pass/fail testing, code fixes, and detailed
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.12.2
+- uses: a11ywatch/github-action@v1.12.3
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
