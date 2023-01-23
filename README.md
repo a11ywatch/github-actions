@@ -9,14 +9,15 @@ Some of the primary features include pass/fail testing, code fixes, and detailed
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.12.3
+- uses: a11ywatch/github-action@v1.13.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
-    TLD: true
+    TLD: false
+    SITEMAP: true
     FAIL_ERRORS_COUNT: 15
     LIST: true
-    FIX: true
+    FIX: false
     UPGRADE: false
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
@@ -32,6 +33,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `SITE_WIDE`                        | Site-wide scanning across all pages.                                                                                                                                                                                     | false          |
 | `FIX`                              | Attempt to apply recommendations to code and commit to github.                                                                                                                                                           | false          |
 | `SUBDOMAINS`                       | Include all subdomains (required SITE_WIDE=true).                                                                                                                                                                        | true           |
+| `SITEMAP`                          | Extend crawl with sitemap links (required SITE_WIDE=true).                                                                                                                                                               | true           |
 | `TLD`                              | Include all tld extensions (required SITE_WIDE=true).                                                                                                                                                                    | true           |
 | `LIST`                             | Report the results to github as a pass or fail list or detailed report.                                                                                                                                                  | false          |
 | `FAIL_TOTAL_COUNT`                 | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs.                                                                                    | 0              |
@@ -102,8 +104,6 @@ runs with 10 samples:
 On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on CPUs/hardware.
 
 When `AI_DISABLED` is set to true the run for `A11yWatch` may increase.
-
-Pa11y-CI could not finish the crawl as it exceeds the github action free limits at 6 hours. It handled around 1000 pages before failing at the 6 hour mark.
 
 ## Common Issues
 

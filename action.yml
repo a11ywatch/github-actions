@@ -25,6 +25,10 @@ inputs:
     description: Perform a site-wide scan.
     required: false
     default: false
+  SITEMAP:
+    description: Extend crawl with sitemap links.
+    required: false
+    default: false
   SUBDOMAINS:
     description: Include all subdomains.
     required: false
@@ -170,12 +174,12 @@ runs:
     - name: A11yWatch Crawl [Local]
       if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} ${{ inputs.SITEMAP == 'true' && '--sitemap' || '' }} --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
     - name: A11yWatch Crawl [External]
       if: ${{ inputs.EXTERNAL == 'true' && inputs.SITE_WIDE == 'true' }}
       shell: bash
-      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} --external --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
+      run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} ${{ inputs.SITEMAP == 'true' && '--sitemap' || '' }} --external --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
     - name: Scan Results Check
       id: a11ywatch-results-generator
