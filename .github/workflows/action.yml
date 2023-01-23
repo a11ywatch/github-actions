@@ -13,6 +13,7 @@ jobs:
           FAIL_TOTAL_COUNT: 10000
           EXTERNAL: false
           SITE_WIDE: true
+          SITEMAP: true
           SUBDOMAINS: true
           TLD: true
           LIST: true
