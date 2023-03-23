@@ -16,6 +16,7 @@ jobs:
           WEBSITE_URL: https://a11ywatch.com
           FAIL_TOTAL_COUNT: 0
           EXTERNAL: false
+          SLIM: true
           SITE_WIDE: true
           SUBDOMAINS: false
           TLD: false
