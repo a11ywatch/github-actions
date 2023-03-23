@@ -9,7 +9,7 @@ Some of the primary features include pass/fail testing, code fixes, and detailed
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.13.0
+- uses: a11ywatch/github-action@v1.14.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
@@ -45,7 +45,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `DISABLE_PR_STATS`                 | Prevent messaging to the pr results of test.                                                                                                                                                                             | false          |
 | `TOKEN`                            | `GITHUB_TOKEN` (permissions `contents: write` and `pull-requests: write`) or a `repo` scoped [Personal Access Token (PAT)](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). | `GITHUB_TOKEN` |
 | `A11YWATCH_TOKEN`                  | The A11yWatch API token to use to identify a user.                                                                                                                                                                       |                |
-| `SLIM`                             | Use the gRPC client to gather reports - only displays stats, useful for large websites (no code generation, no outputs, just pure stats) \*note: Must remove action to toggle or set on first time runs.                 |                |
+| `SLIM`                             | Use the gRPC client to gather reports - only displays stats, useful for large websites (no code generation, no outputs, just pure stats)                                                                                 |                |
 | `UPGRADE`                          | Upgrade the docker images before testing to latest.                                                                                                                                                                      |                |
 
 ### Action Outputs
