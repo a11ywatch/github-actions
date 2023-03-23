@@ -6,6 +6,8 @@ A feature rich GitHub action that runs actionable accessibility reports on your 
 
 Some of the primary features include pass/fail testing, code fixes, and detailed reports.
 
+When running locally the action uses A11yWatch Lite.
+
 ### Usage
 
 ```yaml
