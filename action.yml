@@ -76,7 +76,7 @@ inputs:
   SLIM:
     description: Add slim gRPC client usage to gather issue stats.
     required: false
-    default: false
+    default: true
   UPGRADE:
     description: Upgrade the CLI and docker images to latest across runs.
     required: false
@@ -114,11 +114,19 @@ runs:
         sudo apt install -y protobuf-compiler libprotobuf-dev
 
     - name: A11yWatch CLI Install
+      if: ${{ inputs.SLIM == 'true' }}
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
         version: "0.9.2"
-        features: ${{ inputs.SLIM && "grpc" }}
+        features: "grpc"
+
+    - name: A11yWatch CLI Install
+      if: ${{ inputs.SLIM == 'false' }}
+      uses: baptiste0928/cargo-install@v1
+      with:
+        crate: a11ywatch_cli
+        version: "0.9.2"
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
