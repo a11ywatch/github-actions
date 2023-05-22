@@ -118,7 +118,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.9.3"
+        version: "0.10.1"
         features: "grpc"
 
     - name: A11yWatch CLI Install
@@ -126,7 +126,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.9.3"
+        version: "0.10.1"
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}

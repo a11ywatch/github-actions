@@ -11,7 +11,7 @@ When running locally the action uses A11yWatch Lite.
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v1.14.0
+- uses: a11ywatch/github-action@v1.15.0
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
