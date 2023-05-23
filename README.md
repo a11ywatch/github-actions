@@ -114,7 +114,7 @@ We need docker in order to build the appliciation in quickly since we have some 
 
 ## Localhost Testing
 
-If you are trying to run a website that is running `localhost` inside a docker container you need to use your computers `hostname` instead.
+If you are trying to run a website that is running `localhost` inside a docker container you need to use your computers `hostname`.
 
 Set the input using the `$(hostname)` prefix like `WEBSITE_URL=$(hostname):3000` with the port to test.
 
