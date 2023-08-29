@@ -9,7 +9,7 @@ jobs:
       - name: A11yWatch website scan
         uses: ./
         with:
-          WEBSITE_URL: https://a11ywatch.com
+          WEBSITE_URL: https://www.ck12.org/search/?q=hello&referrer=search
           FAIL_TOTAL_COUNT: 10
           EXTERNAL: false
           SITE_WIDE: true
