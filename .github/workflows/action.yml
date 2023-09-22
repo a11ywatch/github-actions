@@ -10,7 +10,7 @@ jobs:
         uses: ./
         with:
           WEBSITE_URL: https://a11ywatch.com
-          FAIL_TOTAL_COUNT: 10
+          FAIL_TOTAL_COUNT: 100
           EXTERNAL: false
           SITE_WIDE: true
           SITEMAP: true
@@ -18,3 +18,4 @@ jobs:
           TLD: true
           LIST: true
           UPGRADE: true
+          RECORD: recordings

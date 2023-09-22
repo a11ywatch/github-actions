@@ -8,7 +8,7 @@ author: A11yWatch
 branding:
   icon: "shield"
   color: "gray-dark"
-description: Powerful web accessibility testing.
+description: Fast and feature-packed web accessibility testing.
 inputs:
   WEBSITE_URL:
     description: Website domain to scan
@@ -37,6 +37,10 @@ inputs:
     description: Include all TLD extensions.
     required: false
     default: false
+  RECORD:
+    description: Enable video recording audits to a directory location.
+    required: false
+    default: ""
   FAIL_TOTAL_COUNT:
     description: Use to fail the CI if the amount of issues of type errors and warnings is greater than the count.
     required: false
@@ -85,6 +89,9 @@ outputs:
   issues:
     description: "The amount of issues found on the page"
     value: ${{ steps.a11ywatch-results-generator.outputs.issues }}
+  recording_dir:
+    description: "The directory that holds recordings of audits. Only enabled when inputs.RECORD is set."
+    value: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir }}
 runs:
   using: composite
   steps:
@@ -107,6 +114,15 @@ runs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
+
+    - name: Cache playwright binaries
+      if: ${{ inputs.EXTERNAL == 'false' }}
+      uses: actions/cache@v3
+      id: playwright-cache
+      with:
+        path: |
+          ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
     - name: Cache cargo crates
       uses: actions/cache@v3
@@ -135,7 +151,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.10.4"
+        version: "0.10.8"
         features: "grpc"
 
     - name: A11yWatch CLI Install
@@ -143,7 +159,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.10.4"
+        version: "0.10.8"
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -160,10 +176,26 @@ runs:
       shell: bash
       run: a11ywatch --set-cv-url ${{ inputs.COMPUTER_VISION_ENDPOINT }}
 
+    - name: Configure Recording
+      if: ${{ inputs.RECORD }}
+      shell: bash
+      run: a11ywatch --set-recording ${{ inputs.RECORD }}
+
+    - uses: FedericoCarboni/setup-ffmpeg@v2
+      if: ${{ inputs.RECORD && inputs.RECORD != 'false' }}
+
     - name: Build A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
       shell: bash
       run: a11ywatch build --standalone --local ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
+
+    - run: npx playwright install --with-deps
+      if: ${{ inputs.EXTERNAL == 'false' && steps.playwright-cache.outputs.cache-hit != 'true' }}
+      shell: bash
+
+    - run: npx playwright install-deps
+      if: ${{ inputs.EXTERNAL == 'false' && steps.playwright-cache.outputs.cache-hit != 'true' }}
+      shell: bash
 
     - name: Start A11yWatch Service
       if: ${{ inputs.EXTERNAL == 'false' }}
@@ -272,6 +304,18 @@ runs:
       with:
         message: "fix(accessibility): add recommendations from scan"
         committer_name: GitHub Actions
+
+    - name: Get recording directory
+      id: a11ywatch-recordings-directory
+      if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
+      shell: bash
+      run: echo "recording_dir=$( echo "$(a11ywatch --find-tmp-dir)""$inputs.RECORD" )" >> $GITHUB_OUTPUT
+
+    - uses: actions/upload-artifact@v3
+      if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
+      with:
+        name: Recordings
+        path: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir  }}
 
     - name: Stop A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}
