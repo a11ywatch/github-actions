@@ -8,7 +8,7 @@ author: A11yWatch
 branding:
   icon: "shield"
   color: "gray-dark"
-description: Powerful web accessibility testing.
+description: Fast and feature-packed web accessibility testing.
 inputs:
   WEBSITE_URL:
     description: Website domain to scan
@@ -89,6 +89,9 @@ outputs:
   issues:
     description: "The amount of issues found on the page"
     value: ${{ steps.a11ywatch-results-generator.outputs.issues }}
+  recording_dir:
+    description: "The directory that holds recordings of audits. Only enabled when inputs.RECORD is set."
+    value: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir }}
 runs:
   using: composite
   steps:
@@ -148,7 +151,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.10.7"
+        version: "0.10.8"
         features: "grpc"
 
     - name: A11yWatch CLI Install
@@ -156,7 +159,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.10.7"
+        version: "0.10.8"
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -172,11 +175,6 @@ runs:
       if: ${{ inputs.COMPUTER_VISION_ENDPOINT }}
       shell: bash
       run: a11ywatch --set-cv-url ${{ inputs.COMPUTER_VISION_ENDPOINT }}
-
-    - name: Configure Recording
-      if: ${{ inputs.RECORD }}
-      shell: bash
-      run: a11ywatch --set-recording ${{ inputs.RECORD }}
 
     - name: Configure Recording
       if: ${{ inputs.RECORD }}
@@ -307,11 +305,17 @@ runs:
         message: "fix(accessibility): add recommendations from scan"
         committer_name: GitHub Actions
 
+    - name: Get recording directory
+      id: a11ywatch-recordings-directory
+      if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
+      shell: bash
+      run: echo "recording_dir=$( echo "$(a11ywatch --find-tmp-dir)""$inputs.RECORD" )" >> $GITHUB_OUTPUT
+
     - uses: actions/upload-artifact@v3
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
       with:
         name: Recordings
-        path: ${{ inputs.RECORD && inputs.RECORD != 'false' && inputs.RECORD || './recordings'  }}
+        path: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir  }}
 
     - name: Stop A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}

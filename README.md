@@ -21,7 +21,7 @@ When running locally the action uses A11yWatch Lite.
     LIST: true
     FIX: false
     UPGRADE: false
-    RECORD: false
+    RECORD: ./recordings
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_ENDPOINT }}
 ```
@@ -39,7 +39,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `SITEMAP`                          | Extend crawl with sitemap links (required SITE_WIDE=true).                                                                                                                                                               | true           |
 | `TLD`                              | Include all tld extensions (required SITE_WIDE=true).                                                                                                                                                                    | true           |
 | `LIST`                             | Report the results to github as a pass or fail list or detailed report.                                                                                                                                                  | false          |
-| `RECORD`                           | Record the audit as video to a directory.                                                                                                                                                                                 |                |
+| `RECORD`                           | Record the audit as video to a directory.                                                                                                                                                                                |                |
 | `FAIL_TOTAL_COUNT`                 | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs.                                                                                    | 0              |
 | `FAIL_ERRORS_COUNT`                | Determine whether to fail the CI if total issues with errors exceed the counter.                                                                                                                                         | 0              |
 | `FAIL_WARNINGS_COUNT`              | Determine whether to fail the CI if total issues with warnings exceed the counter.                                                                                                                                       | 0              |
@@ -58,61 +58,18 @@ All inputs are **optional** except $WEBSITE_URL.
 | -------- | -------------------------- | ------- |
 | `issues` | The amount of issues found |         |
 
-## Benches
 
-The hardware specs for results:
+## Performance
 
-```sh
-----------------------
-linux ubuntu-latest
-2-core CPU
-7 GB of RAM memory
-14 GB of SSD disk space
------------------------
-```
-
-### Benchmark Results
-
-The results for crawling a website that is small - large.
-
-#### crawl-speed
-
-Test url: `https://a11ywatch.com`
-
-25 pages
-
-runs with 10 samples:
-
-|                        | `libraries`            |
-| :--------------------- | :--------------------- |
-| **`A11yWatch: crawl`** | `0.4 s` (✅ **1.00x**) |
-| **`Pa11y-CI: crawl`**  | `45 s` (✅ **1.00x**)  |
-| **`Axe: crawl`**       | `N/A` (✅ **1.00x**)   |
-
-#### crawl-speed (Large Website)
-
-Test url: `https://www.hbo.com`
-
-7500 pages.
-
-runs with 10 samples:
-
-|                        | `libraries`               |
-| :--------------------- | :------------------------ |
-| **`A11yWatch: crawl`** | `2.5 mins` (✅ **1.00x**) |
-| **`Pa11y-CI: crawl`**  | `50+ hr` (✅ **1.00x**)   |
-| **`Axe: crawl`**       | `N/A` (✅ **1.00x**)      |
-
-### Benchmark Info
-
-On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on CPUs/hardware.
+On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on CPUs/hardware. After the first installation you should have faster setup time between runs.
+You can expect to handle at least 1k pages per minute on a 2-core CPU 7 GB of RAM memory shared github action. If you enable `RECORD` the output time may increase a bit.
 
 When `AI_DISABLED` is set to true the run for `A11yWatch` may increase.
 
 ## Common Issues
 
-If you experience issues on your CI you may have to toggle the `UPGRADE` input to true in order to get the latest docker images.
-We need docker in order to build the appliciation in quickly since we have some services that need to compile that may take awhile.
+If you experience issues on your CI you may have to toggle the `UPGRADE` input to true in order to get the latest installs. If you see 
+a playwright error try adding `PLAYWRIGHT_VERSION` env variable with the newest version to install chrome.
 
 ## CLI
 
