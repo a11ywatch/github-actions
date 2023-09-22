@@ -21,6 +21,7 @@ When running locally the action uses A11yWatch Lite.
     LIST: true
     FIX: false
     UPGRADE: false
+    RECORD: false
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_ENDPOINT }}
 ```
@@ -38,6 +39,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `SITEMAP`                          | Extend crawl with sitemap links (required SITE_WIDE=true).                                                                                                                                                               | true           |
 | `TLD`                              | Include all tld extensions (required SITE_WIDE=true).                                                                                                                                                                    | true           |
 | `LIST`                             | Report the results to github as a pass or fail list or detailed report.                                                                                                                                                  | false          |
+| `RECORD`                           | Record the audit as video to a directory.                                                                                                                                                                                 |                |
 | `FAIL_TOTAL_COUNT`                 | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs.                                                                                    | 0              |
 | `FAIL_ERRORS_COUNT`                | Determine whether to fail the CI if total issues with errors exceed the counter.                                                                                                                                         | 0              |
 | `FAIL_WARNINGS_COUNT`              | Determine whether to fail the CI if total issues with warnings exceed the counter.                                                                                                                                       | 0              |
