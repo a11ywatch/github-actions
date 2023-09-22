@@ -309,7 +309,7 @@ runs:
       id: a11ywatch-recordings-directory
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
       shell: bash
-      run: echo "recording_dir=$( echo "$(a11ywatch --find-tmp-dir)""$inputs.RECORD" )" >> $GITHUB_OUTPUT
+      run: echo "recording_dir=$( echo "$(a11ywatch --find-tmp-dir)""${{inputs.RECORD}}" )" >> $GITHUB_OUTPUT
 
     - uses: actions/upload-artifact@v3
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
