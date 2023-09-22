@@ -21,7 +21,6 @@ When running locally the action uses A11yWatch Lite.
     LIST: true
     FIX: false
     UPGRADE: false
-    RECORD: recordings
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_ENDPOINT }}
 ```

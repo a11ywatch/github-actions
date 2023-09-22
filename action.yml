@@ -89,9 +89,9 @@ outputs:
   issues:
     description: "The amount of issues found on the page"
     value: ${{ steps.a11ywatch-results-generator.outputs.issues }}
-  recording_dir:
-    description: "The directory that holds recordings of audits. Only enabled when inputs.RECORD is set."
-    value: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir }}
+  # recording_dir:
+  #   description: "The directory that holds recordings of audits. Only enabled when inputs.RECORD is set."
+  #   value: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir }}
 runs:
   using: composite
   steps:
@@ -305,17 +305,18 @@ runs:
         message: "fix(accessibility): add recommendations from scan"
         committer_name: GitHub Actions
 
-    - name: Get recording directory
-      id: a11ywatch-recordings-directory
-      if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
-      shell: bash
-      run: echo "recording_dir=$( echo "$(a11ywatch --find-tmp-dir)""${{inputs.RECORD}}" )" >> $GITHUB_OUTPUT
+    # - name: Get recording directory
+    #   id: a11ywatch-recordings-directory
+    #   if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
+    #   shell: bash
+    #   run: echo "recording_dir=$( echo "$(a11ywatch --find-tmp-dir)""/${{inputs.RECORD}}" )" >> $GITHUB_OUTPUT
 
     - uses: actions/upload-artifact@v3
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
       with:
         name: Recordings
-        path: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir  }}
+        # path: ${{ steps.a11ywatch-recordings-directory.outputs.recording_dir  }}
+        path: ${{ inputs.RECORD  }}
 
     - name: Stop A11yWatch Service
       if: ${{ !inputs.EXTERNAL }}
