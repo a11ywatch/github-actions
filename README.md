@@ -50,6 +50,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `A11YWATCH_TOKEN`                  | The A11yWatch API token to use to identify a user.                                                                                                                                                                       |                |
 | `SLIM`                             | Use the gRPC client to gather reports - only displays stats, useful for large websites (no code generation, no outputs, just pure stats)                                                                                 | false          |
 | `UPGRADE`                          | Upgrade the docker images before testing to latest.                                                                                                                                                                      | false          |
+| `UPLOAD`                           | Upload the data as an artifact to get better insight.                                                                                                                                                                      | false          |
 
 ### Action Outputs
 
