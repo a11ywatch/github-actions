@@ -116,7 +116,7 @@ runs:
           ${{ runner.os }}-yarn-
 
     - name: Cache playwright binaries
-      if: ${{ inputs.EXTERNAL == 'false' }}
+      if: ${{ inputs.EXTERNAL != 'true' }}
       uses: actions/cache@v3
       id: playwright-cache
       with:
@@ -185,25 +185,25 @@ runs:
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' }}
 
     - name: Build A11yWatch Service
-      if: ${{ inputs.EXTERNAL == 'false' }}
+      if: ${{ inputs.EXTERNAL != 'true' }}
       shell: bash
       run: a11ywatch build --standalone --local ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
 
     - run: npx playwright install --with-deps
-      if: ${{ inputs.EXTERNAL == 'false' && steps.playwright-cache.outputs.cache-hit != 'true' }}
+      if: ${{ inputs.EXTERNAL != 'true' && steps.playwright-cache.outputs.cache-hit != 'true' }}
       shell: bash
 
     - run: npx playwright install-deps
-      if: ${{ inputs.EXTERNAL == 'false' && steps.playwright-cache.outputs.cache-hit != 'true' }}
+      if: ${{ inputs.EXTERNAL != 'true' && steps.playwright-cache.outputs.cache-hit != 'true' }}
       shell: bash
 
     - name: Start A11yWatch Service
-      if: ${{ inputs.EXTERNAL == 'false' }}
+      if: ${{ inputs.EXTERNAL != 'true' }}
       shell: bash
       run: a11ywatch start --standalone --local
 
     - name: A11yWatch Scan [Local]
-      if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'false' }}
+      if: ${{ inputs.EXTERNAL != 'true' && inputs.SITE_WIDE == 'false' }}
       shell: bash
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
@@ -213,7 +213,7 @@ runs:
       run: a11ywatch scan --url ${{ inputs.WEBSITE_URL }} --external --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
     - name: A11yWatch Crawl [Local]
-      if: ${{ inputs.EXTERNAL == 'false' && inputs.SITE_WIDE == 'true' }}
+      if: ${{ inputs.EXTERNAL != 'true' && inputs.SITE_WIDE == 'true' }}
       shell: bash
       run: a11ywatch crawl --url ${{ inputs.WEBSITE_URL }} ${{ inputs.SUBDOMAINS == 'true' && '--subdomains' || '' }} ${{ inputs.TLD == 'true' && '--tld' || ''}} ${{ inputs.SITEMAP == 'true' && '--sitemap' || '' }} --save ${{ inputs.FIX == 'true' && '--fix' || '' }}
 
