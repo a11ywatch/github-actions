@@ -50,7 +50,7 @@ All inputs are **optional** except $WEBSITE_URL.
 | `A11YWATCH_TOKEN`                  | The A11yWatch API token to use to identify a user.                                                                                                                                                                       |                |
 | `SLIM`                             | Use the gRPC client to gather reports - only displays stats, useful for large websites (no code generation, no outputs, just pure stats)                                                                                 | false          |
 | `UPGRADE`                          | Upgrade the docker images before testing to latest.                                                                                                                                                                      | false          |
-| `UPLOAD`                           | Upload the data as an artifact to get better insight.                                                                                                                                                                      | false          |
+| `UPLOAD`                           | Upload the data as an artifact to get better insight.                                                                                                                                                                    | false          |
 
 ### Action Outputs
 
@@ -60,9 +60,11 @@ All inputs are **optional** except $WEBSITE_URL.
 
 ### ENV Variables
 
-| Name              | Description                                                                      | Default      |
-| ----------------- | -------------------------------------------------------------------------------- | ------------ |
-| `DEFAULT_RUNNERS` | A comma separeted list of runners to use for testing like `axe`, `htmlcs`, `ace` | `htmlcs,axe` |
+| Name              | Description                                                                                   | Default      |
+| ----------------- | --------------------------------------------------------------------------------------------- | ------------ |
+| `DEFAULT_RUNNERS` | A comma separeted list of runners to use in Litemode for testing like `axe`, `htmlcs`, `ace`. | `htmlcs,axe` |
+
+If you set it to only `htmlcs` you will have really fast crawls with good coverage with our fork.
 
 ## Performance
 
