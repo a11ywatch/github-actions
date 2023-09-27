@@ -19,5 +19,5 @@ jobs:
           LIST: true
           UPGRADE: true
           UPLOAD: true
-        # env:
-        #   DEFAULT_RUNNERS: htmlcs
+        env:
+          DEFAULT_RUNNERS: htmlcs
