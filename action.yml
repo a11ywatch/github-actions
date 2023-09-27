@@ -85,6 +85,10 @@ inputs:
     description: Upgrade the CLI to latest across runs.
     required: false
     default: false
+  UPLOAD:
+    description: Upload the audit as an artifact.
+    required: false
+    default: false
 outputs:
   issues:
     description: "The amount of issues found on the page"
@@ -310,6 +314,18 @@ runs:
     #   if: ${{ inputs.RECORD && inputs.RECORD != 'false' && failure() || success() }}
     #   shell: bash
     #   run: echo "recording_dir=$( echo "$(a11ywatch --find-tmp-dir)""/${{inputs.RECORD}}" )" >> $GITHUB_OUTPUT
+
+    - name: Get audit directory
+      id: a11ywatch-audit-directory
+      if: ${{ inputs.UPLOAD && inputs.UPLOAD != 'false' && (failure() || success()) }}
+      shell: bash
+      run: echo "audit_dir=$( echo "$(a11ywatch --find-results)" )" >> $GITHUB_OUTPUT
+
+    - uses: actions/upload-artifact@v3
+      if: ${{ inputs.UPLOAD && inputs.UPLOAD != 'false' && (failure() || success()) }}
+      with:
+        name: Audit Results
+        path: ${{ steps.a11ywatch-audit-directory.outputs.audit_dir  }}
 
     - uses: actions/upload-artifact@v3
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' && (failure() || success()) }}
