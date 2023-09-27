@@ -40,7 +40,7 @@ inputs:
   RECORD:
     description: Enable video recording audits to a directory location.
     required: false
-    default: ""
+    default: false
   FAIL_TOTAL_COUNT:
     description: Use to fail the CI if the amount of issues of type errors and warnings is greater than the count.
     required: false
