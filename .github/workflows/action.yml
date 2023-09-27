@@ -9,13 +9,13 @@ jobs:
       - name: A11yWatch website scan
         uses: ./
         with:
-          WEBSITE_URL: https://jeffmendez.com
+          WEBSITE_URL: https://a11ywatch.com
           FAIL_TOTAL_COUNT: 40
           EXTERNAL: false
           SITE_WIDE: true
           SITEMAP: true
-          SUBDOMAINS: true
-          TLD: true
+          SUBDOMAINS: false
+          TLD: false
           LIST: true
           UPGRADE: true
           UPLOAD: true
