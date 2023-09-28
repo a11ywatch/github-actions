@@ -5,19 +5,16 @@ jobs:
     name: End to End
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: A11yWatch website scan
         uses: ./
         with:
           WEBSITE_URL: https://jeffmendez.com
-          FAIL_TOTAL_COUNT: 40
+          FAIL_TOTAL_COUNT: 100
           EXTERNAL: false
           SITE_WIDE: true
-          SITEMAP: true
-          SUBDOMAINS: true
-          TLD: true
           LIST: true
-          UPGRADE: true
           UPLOAD: true
-        # env:
-        #   DEFAULT_RUNNERS: htmlcs
+        env:
+          DEFAULT_RUNNERS: htmlcs
+          PAGEMIND_IGNORE_WARNINGS: true

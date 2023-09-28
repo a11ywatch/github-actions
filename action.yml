@@ -99,25 +99,42 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v3.0.2
+    - name: Checkout code
       if: ${{ inputs.FIX == 'true' }}
+      uses: actions/checkout@v4
       with:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
         ref: ${{ github.event.pull_request.head.ref }}
         clean: false
 
     - name: Get yarn cache directory path
+      if: ${{ inputs.EXTERNAL != 'true' }}
       id: yarn-cache-dir-path
       run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
       shell: bash
 
     - uses: actions/cache@v3
+      if: ${{ inputs.EXTERNAL != 'true' }}
       id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
+
+    - name: Cache node modules
+      if: ${{ inputs.EXTERNAL != 'true' }}
+      id: cache-npm
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
 
     - name: Cache playwright binaries
       if: ${{ inputs.EXTERNAL != 'true' }}
@@ -155,7 +172,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.10.8"
+        version: "0.10.12"
         features: "grpc"
 
     - name: A11yWatch CLI Install
@@ -163,7 +180,7 @@ runs:
       uses: baptiste0928/cargo-install@v1
       with:
         crate: a11ywatch_cli
-        version: "0.10.8"
+        version: "0.10.12"
 
     - name: Configure CLI creds
       if: ${{ inputs.A11YWATCH_TOKEN }}
@@ -185,21 +202,23 @@ runs:
       shell: bash
       run: a11ywatch --set-recording ${{ inputs.RECORD }}
 
-    - uses: FedericoCarboni/setup-ffmpeg@v2
+    - name: Install ffmpeg for Recordings
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' }}
+      uses: FedericoCarboni/setup-ffmpeg@v2
 
     - name: Build A11yWatch Service
-      if: ${{ inputs.EXTERNAL != 'true' }}
+      if: ${{ inputs.EXTERNAL != 'true' && inputs.UPGRADE == 'true' }}
       shell: bash
       run: a11ywatch build --standalone --local ${{ inputs.UPGRADE == 'true' && '--upgrade' || '' }}
 
-    - run: npx playwright install --with-deps
+    - name: Install playwright Browsers
       if: ${{ inputs.EXTERNAL != 'true' && steps.playwright-cache.outputs.cache-hit != 'true' }}
+      run: npx playwright install --with-deps
       shell: bash
 
-    - run: npx playwright install-deps
-      if: ${{ inputs.EXTERNAL != 'true' && steps.playwright-cache.outputs.cache-hit != 'true' }}
-      shell: bash
+    # - run: npx playwright install-deps
+    #   if: ${{ inputs.EXTERNAL != 'true' && steps.playwright-cache.outputs.cache-hit != 'true' }}
+    #   shell: bash
 
     - name: Start A11yWatch Service
       if: ${{ inputs.EXTERNAL != 'true' }}
