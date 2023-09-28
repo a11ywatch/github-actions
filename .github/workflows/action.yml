@@ -20,4 +20,4 @@ jobs:
           UPGRADE: true
           UPLOAD: true
         env:
-          DEFAULT_RUNNERS: htmlcs
+          DEFAULT_RUNNERS: axe
