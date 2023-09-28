@@ -11,7 +11,7 @@ When running locally the action uses A11yWatch Lite.
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v2
+- uses: a11ywatch/github-action@v2.1.7
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SUBDOMAINS: true
@@ -21,8 +21,12 @@ When running locally the action uses A11yWatch Lite.
     LIST: true
     FIX: false
     UPGRADE: false
+    UPLOAD: true
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_ENDPOINT }}
+  env: 
+    DEFAULT_RUNNERS: htmlcs,axe
+    PAGEMIND_IGNORE_WARNINGS: true
 ```
 
 ### Action inputs
