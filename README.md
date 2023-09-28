@@ -60,9 +60,12 @@ All inputs are **optional** except $WEBSITE_URL.
 
 ### ENV Variables
 
-| Name              | Description                                                                                   | Default      |
-| ----------------- | --------------------------------------------------------------------------------------------- | ------------ |
-| `DEFAULT_RUNNERS` | A comma separeted list of runners to use in Litemode for testing like `axe`, `htmlcs`, `ace`. | `htmlcs,axe` |
+Configure crawl wide settings for A11yWatch Lite (local) installs.
+
+| Name                       | Description                                                                                   | Default      |
+| -------------------------- | --------------------------------------------------------------------------------------------- | ------------ |
+| `DEFAULT_RUNNERS`          | A comma separeted list of runners to use in Litemode for testing like `axe`, `htmlcs`, `ace`. | `htmlcs,axe` |
+| `PAGEMIND_IGNORE_WARNINGS` | Enable to ignore all warnings from output. This could speed up runs and save on audit size.   | false        |
 
 If you set it to only `htmlcs` you will have really fast crawls with good coverage with our fork.
 
