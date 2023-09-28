@@ -90,6 +90,9 @@ inputs:
     required: false
     default: false
 outputs:
+  results:
+    description: "Website Results"
+    value: ${{ steps.a11ywatch-results-generator.outputs.results }}
   issues:
     description: "The amount of issues found on the page"
     value: ${{ steps.a11ywatch-results-generator.outputs.issues }}
@@ -285,6 +288,8 @@ runs:
           fi
         fi
 
+        results_json="$(a11ywatch --results-parsed)"
+        echo "results=$(echo ${results_json})" >> $GITHUB_OUTPUT
         echo "issues=$(echo ${website_issues_total})" >> $GITHUB_OUTPUT
 
     - name: Post Stats to GitHub PR
