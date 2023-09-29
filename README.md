@@ -6,7 +6,7 @@ A feature rich GitHub action that runs actionable accessibility reports on your 
 
 Some of the primary features include pass/fail testing, code fixes, and detailed reports.
 
-When running locally the action uses A11yWatch Lite.
+When running locally the action uses A11yWatch Lite and installs the [a11ywatch-cli](https://github.com/a11ywatch/a11ywatch).
 
 ### Usage
 
@@ -59,9 +59,10 @@ All inputs are **optional** except $WEBSITE_URL.
 
 ### Action Outputs
 
-| Name     | Description                | Default |
-| -------- | -------------------------- | ------- |
-| `issues` | The amount of issues found |         |
+| Name      | Description                       | Default |
+| --------- | --------------------------------- | ------- |
+| `issues`  | The amount of issues found.       |         |
+| `results` | The results of the audit as json. |         |
 
 ### ENV Variables
 
@@ -84,10 +85,6 @@ You can expect to handle at least 1k pages per minute on a 2-core CPU 7 GB of RA
 
 If you experience issues on your CI you may have to toggle the `UPGRADE` input to true in order to get the latest installs. If you see
 a playwright error try adding `PLAYWRIGHT_VERSION` env variable with the newest version to install chrome.
-
-## CLI
-
-In order to get the results of the run in json run `results_json="$(a11ywatch -r)"` across any step after the action.
 
 ## LICENSE
 
