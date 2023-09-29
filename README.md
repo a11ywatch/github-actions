@@ -24,9 +24,10 @@ When running locally the action uses A11yWatch Lite.
     UPLOAD: true
     COMPUTER_VISION_SUBSCRIPTION_KEY: ${{ secrets.COMPUTER_VISION_SUBSCRIPTION_KEY }}
     COMPUTER_VISION_ENDPOINT: ${{ secrets.COMPUTER_VISION_ENDPOINT }}
-  env: 
+  env:
     DEFAULT_RUNNERS: htmlcs,axe
     PAGEMIND_IGNORE_WARNINGS: true
+    AI_DISABLED: false
 ```
 
 ### Action inputs
@@ -43,9 +44,9 @@ All inputs are **optional** except $WEBSITE_URL.
 | `TLD`                              | Include all tld extensions (required SITE_WIDE=true).                                                                                                                                                                    | true           |
 | `LIST`                             | Report the results to github as a pass or fail list or detailed report.                                                                                                                                                  | false          |
 | `RECORD`                           | Record the audit as video to a directory.                                                                                                                                                                                |                |
-| `FAIL_TOTAL_COUNT`                 | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs.                                                                                    | 0              |
-| `FAIL_ERRORS_COUNT`                | Determine whether to fail the CI if total issues with errors exceed the counter.                                                                                                                                         | 0              |
-| `FAIL_WARNINGS_COUNT`              | Determine whether to fail the CI if total issues with warnings exceed the counter.                                                                                                                                       | 0              |
+| `FAIL_TOTAL_COUNT`                 | Determine whether to fail the CI if total issues warnings and errors exceed the counter. Takes precedence over the other FAIL inputs. Set to a value greater than 0 for CI failure.                                      | 0              |
+| `FAIL_ERRORS_COUNT`                | Determine whether to fail the CI if total issues with errors exceed the counter. Set to a value greater than 0 for CI failure.                                                                                           | 0              |
+| `FAIL_WARNINGS_COUNT`              | Determine whether to fail the CI if total issues with warnings exceed the counter. Set to a value greater than 0 for CI failure.                                                                                         | 0              |
 | `EXTERNAL`                         | Use the A11yWatch remote API for fast results. If this is set `A11YWATCH_TOKEN` is needed.                                                                                                                               |                |
 | `COMPUTER_VISION_SUBSCRIPTION_KEY` | [Computer Vision](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/#overview) API key for image recognition on alts.                                                                        |                |
 | `COMPUTER_VISION_ENDPOINT`         | Computer Vision url endpoint.                                                                                                                                                                                            | false          |
@@ -66,10 +67,11 @@ All inputs are **optional** except $WEBSITE_URL.
 
 Configure crawl wide settings for A11yWatch Lite (local) installs.
 
-| Name                       | Description                                                                                   | Default      |
-| -------------------------- | --------------------------------------------------------------------------------------------- | ------------ |
-| `DEFAULT_RUNNERS`          | A comma separeted list of runners to use in Litemode for testing like `axe`, `htmlcs`, `ace`. | `htmlcs,axe` |
-| `PAGEMIND_IGNORE_WARNINGS` | Enable to ignore all warnings from output. This could speed up runs and save on audit size.   | false        |
+| Name                       | Description                                                                                           | Default      |
+| -------------------------- | ----------------------------------------------------------------------------------------------------- | ------------ |
+| `DEFAULT_RUNNERS`          | A comma separeted list of runners to use in Litemode for testing like `axe`, `htmlcs`, `ace`.         | `htmlcs,axe` |
+| `PAGEMIND_IGNORE_WARNINGS` | Enable to ignore all warnings from output. This could speed up runs and save on audit size.           | false        |
+| `AI_DISABLED`              | Disable AI use to get missing resource props like alts. If enabled the speed may increase of the run. | false        |
 
 If you set it to only `htmlcs` you will have really fast crawls with good coverage with our fork.
 
@@ -77,8 +79,6 @@ If you set it to only `htmlcs` you will have really fast crawls with good covera
 
 On a larger website A11yWatch action runs over 60x-10,000x+ faster depending on CPUs/hardware. After the first installation you should have faster setup time between runs.
 You can expect to handle at least 1k pages per minute on a 2-core CPU 7 GB of RAM memory shared github action. If you enable `RECORD` the output time may increase a bit.
-
-When `AI_DISABLED` is set to true the run for `A11yWatch` may increase.
 
 ## Common Issues
 
