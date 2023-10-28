@@ -14,6 +14,7 @@ When running locally the action uses A11yWatch Lite and installs the [a11ywatch-
 - uses: a11ywatch/github-action@v2.1.7
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
+    SITE_WIDE: true
     SUBDOMAINS: true
     TLD: false
     SITEMAP: true
