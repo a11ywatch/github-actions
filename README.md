@@ -71,7 +71,7 @@ Configure crawl wide settings for A11yWatch Lite (local) installs.
 
 | Name                       | Description                                                                                           | Default      |
 | -------------------------- | ----------------------------------------------------------------------------------------------------- | ------------ |
-| `DEFAULT_RUNNERS`          | A comma separeted list of runners to use in Litemode for testing like `axe` and `htmlcs`.         | `htmlcs,axe` |
+| `DEFAULT_RUNNERS`          | A comma separated list of runners to use in Litemode for testing like `axe` and `htmlcs`.         | `htmlcs,axe` |
 | `PAGEMIND_IGNORE_WARNINGS` | Enable to ignore all warnings from output. This could speed up runs and save on audit size.           | false        |
 | `AI_DISABLED`              | Disable AI use to get missing resource props like alts. If enabled the speed may increase of the run. | false        |
 
