@@ -11,7 +11,7 @@ When running locally the action uses A11yWatch Lite and installs the [a11ywatch-
 ### Usage
 
 ```yaml
-- uses: a11ywatch/github-action@v2.1.9
+- uses: a11ywatch/github-action@v2.1.10
   with:
     WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
     SITE_WIDE: true

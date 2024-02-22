@@ -18,10 +18,11 @@ jobs:
         with:
           WEBSITE_URL: ${{ secrets.WEBSITE_URL }}
           FAIL_TOTAL_COUNT: 100
-          EXTERNAL: false
+          EXTERNAL: true
           SITE_WIDE: true
           LIST: true
           UPLOAD: true
+          A11YWATCH_TOKEN: ${{ secrets.A11YWATCH_TOKEN }}
         env:
           DEFAULT_RUNNERS: htmlcs
           PAGEMIND_IGNORE_WARNINGS: true
