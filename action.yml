@@ -345,13 +345,13 @@ runs:
       shell: bash
       run: echo "audit_dir=$( echo "$(a11ywatch --find-results)" )" >> $GITHUB_OUTPUT
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: ${{ inputs.UPLOAD && inputs.UPLOAD != 'false' && (failure() || success()) }}
       with:
         name: Audit Results
         path: ${{ steps.a11ywatch-audit-directory.outputs.audit_dir  }}
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: ${{ inputs.RECORD && inputs.RECORD != 'false' && (failure() || success()) }}
       with:
         name: Recordings
